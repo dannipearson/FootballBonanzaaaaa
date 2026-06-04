@@ -221,7 +221,7 @@ tr:hover td{ background:rgba(255,255,255,.04); }
   <div class="chips">
     <div class="chip">Entry deadline <strong>11 June 2026, 19:00</strong></div>
     <div class="chip">Entry fee <strong>£5.00</strong></div>
-    <div class="chip">Updated <strong>03 June 2026 at 14:26</strong></div>
+    <div class="chip">Updated <strong>04 June 2026 at 19:26</strong></div>
   </div>
 </div>
 
@@ -267,7 +267,7 @@ tr:hover td{ background:rgba(255,255,255,.04); }
     <div class="sl">Possible Entrants</div>
   </div>
   <div class="stat-chip">
-    <div class="sv">18</div>
+    <div class="sv">25</div>
     <div class="sl">Predictions Received</div>
   </div>
   <div class="stat-chip" style="border-color:rgba(255,215,0,.3)">
@@ -374,7 +374,7 @@ tr:hover td{ background:rgba(255,255,255,.04); }
       <button class="filter-btn" onclick="clearShortlist()" style="font-size:.8rem;padding:5px 12px">Clear All</button>
     </div>
     <p style="color:var(--muted);font-size:.82rem;margin-bottom:16px">
-      Use this to shortlist players before submitting your picks. Saved in this browser tab only.
+      Use this to shortlist players before submitting your picks. Saved in your browser — your shortlist will still be here next time you open this page.
     </p>
     <div id="shortlist-content"></div>
   </div>
@@ -640,7 +640,7 @@ tr:hover td{ background:rgba(255,255,255,.04); }
 
 <!-- FOOTER -->
 <div class="footer">
-  World Cup 2026 Bonanzaaaaa &nbsp;·&nbsp; Pre-Tournament Hub &nbsp;·&nbsp; Generated 03 June 2026 at 14:26
+  World Cup 2026 Bonanzaaaaa &nbsp;·&nbsp; Pre-Tournament Hub &nbsp;·&nbsp; Generated 04 June 2026 at 19:26
 </div>
 
 <script>
@@ -669,8 +669,21 @@ function showTeamView(view, btn) {
   btn.classList.add('active');
 }
 
-// ── Shortlist ─────────────────────────────────────────────────────────────
-let shortlist = [];  // array of player objects
+// ── Shortlist (persisted in localStorage) ────────────────────────────────
+const STORAGE_KEY = 'wc2026_shortlist';
+
+function loadShortlist() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) { return []; }
+}
+
+function saveShortlist(list) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); } catch(e) {}
+}
+
+let shortlist = loadShortlist();  // array of player objects
 
 function toggleStar(playerId, btn) {
   const idx = shortlist.findIndex(p => p.player_id === playerId);
@@ -684,6 +697,7 @@ function toggleStar(playerId, btn) {
     btn.classList.add('starred');
     btn.title = 'Remove from shortlist';
   }
+  saveShortlist(shortlist);
   document.getElementById('sl-count').textContent = shortlist.length;
   renderShortlistContent();
 }
@@ -699,6 +713,7 @@ function closeShortlist() {
 
 function removeFromShortlist(playerId) {
   shortlist = shortlist.filter(p => p.player_id !== playerId);
+  saveShortlist(shortlist);
   document.getElementById('sl-count').textContent = shortlist.length;
   // Update star button in table if visible
   const starBtn = document.querySelector(`button[data-pid="${playerId}"]`);
@@ -708,6 +723,7 @@ function removeFromShortlist(playerId) {
 
 function clearShortlist() {
   shortlist = [];
+  saveShortlist(shortlist);
   document.getElementById('sl-count').textContent = 0;
   document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('starred'));
   renderShortlistContent();
@@ -819,6 +835,7 @@ function renderLinks() {
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────
+document.getElementById('sl-count').textContent = shortlist.length;
 filterSquads();
 </script>
 </body>
