@@ -29,13 +29,22 @@ body{ background:var(--navy); color:var(--white); font-family:'Barlow',sans-seri
 .hero h1 span{ color:var(--white); }
 .hero .sub{ font-size:.9rem; color:var(--muted); margin-top:6px; letter-spacing:.1em; text-transform:uppercase; }
 .hero .chips{ margin-top:18px; display:flex; justify-content:center; gap:16px; flex-wrap:wrap; }
-.hero .countdown-bar{ margin-top:14px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
-.cd-unit{ text-align:center; min-width:64px; }
-.cd-num{ font-family:'Barlow Condensed',sans-serif; font-size:2.2rem; font-weight:800;
-  color:var(--gold); line-height:1; display:block; }
-.cd-lbl{ font-size:.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; }
+.hero .countdown-wrap{ margin-top:16px; display:inline-flex; flex-direction:column;
+  align-items:center; gap:8px; }
+.hero .countdown-bar{ display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+  justify-content:center;
+  background:rgba(243,156,18,.1); border:2px solid var(--amber);
+  border-radius:12px; padding:12px 24px; }
+.cd-label-above{ font-size:.72rem; color:var(--amber); text-transform:uppercase;
+  letter-spacing:.15em; font-weight:600; }
+.cd-unit{ text-align:center; min-width:58px; }
+.cd-num{ font-family:'Barlow Condensed',sans-serif; font-size:2.4rem; font-weight:800;
+  color:var(--amber); line-height:1; display:block;
+  text-shadow:0 0 18px rgba(243,156,18,.4); }
+.cd-lbl{ font-size:.65rem; color:rgba(243,156,18,.7); text-transform:uppercase;
+  letter-spacing:.1em; margin-top:2px; }
 .cd-sep{ font-family:'Barlow Condensed',sans-serif; font-size:2rem; font-weight:800;
-  color:var(--border); line-height:1; padding-top:2px; }
+  color:rgba(243,156,18,.4); line-height:1; padding-bottom:14px; }
 .cd-expired{ font-family:'Barlow Condensed',sans-serif; font-size:1.1rem; font-weight:700;
   color:var(--red); letter-spacing:.05em; }
 .chip{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
@@ -230,16 +239,19 @@ tr:hover td{ background:rgba(255,255,255,.04); }
   <div class="chips">
     <div class="chip">Entry deadline <strong>11 June 2026, 19:00</strong></div>
     <div class="chip">Entry fee <strong>£5.00</strong></div>
-    <div class="chip">Updated <strong>05 June 2026 at 17:44</strong></div>
+    <div class="chip">Updated <strong>05 June 2026 at 17:47</strong></div>
   </div>
-  <div class="countdown-bar" id="cd-bar" data-deadline="2026-06-11T19:00:00">
-    <div class="cd-unit"><span class="cd-num" id="cd-d">--</span><span class="cd-lbl">Days</span></div>
-    <div class="cd-sep">:</div>
-    <div class="cd-unit"><span class="cd-num" id="cd-h">--</span><span class="cd-lbl">Hours</span></div>
-    <div class="cd-sep">:</div>
-    <div class="cd-unit"><span class="cd-num" id="cd-m">--</span><span class="cd-lbl">Mins</span></div>
-    <div class="cd-sep">:</div>
-    <div class="cd-unit"><span class="cd-num" id="cd-s">--</span><span class="cd-lbl">Secs</span></div>
+  <div class="countdown-wrap">
+    <div class="cd-label-above">⏰ Deadline closes in</div>
+    <div class="countdown-bar" id="cd-bar" data-deadline="2026-06-11T19:00:00">
+      <div class="cd-unit"><span class="cd-num" id="cd-d">--</span><span class="cd-lbl">Days</span></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit"><span class="cd-num" id="cd-h">--</span><span class="cd-lbl">Hours</span></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit"><span class="cd-num" id="cd-m">--</span><span class="cd-lbl">Mins</span></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit"><span class="cd-num" id="cd-s">--</span><span class="cd-lbl">Secs</span></div>
+    </div>
   </div>
 </div>
 
@@ -658,7 +670,7 @@ tr:hover td{ background:rgba(255,255,255,.04); }
 
 <!-- FOOTER -->
 <div class="footer">
-  World Cup 2026 Bonanzaaaaa &nbsp;·&nbsp; Pre-Tournament Hub &nbsp;·&nbsp; Generated 05 June 2026 at 17:44
+  World Cup 2026 Bonanzaaaaa &nbsp;·&nbsp; Pre-Tournament Hub &nbsp;·&nbsp; Generated 05 June 2026 at 17:47
 </div>
 
 <script>
