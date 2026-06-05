@@ -29,6 +29,15 @@ body{ background:var(--navy); color:var(--white); font-family:'Barlow',sans-seri
 .hero h1 span{ color:var(--white); }
 .hero .sub{ font-size:.9rem; color:var(--muted); margin-top:6px; letter-spacing:.1em; text-transform:uppercase; }
 .hero .chips{ margin-top:18px; display:flex; justify-content:center; gap:16px; flex-wrap:wrap; }
+.hero .countdown-bar{ margin-top:14px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+.cd-unit{ text-align:center; min-width:64px; }
+.cd-num{ font-family:'Barlow Condensed',sans-serif; font-size:2.2rem; font-weight:800;
+  color:var(--gold); line-height:1; display:block; }
+.cd-lbl{ font-size:.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; }
+.cd-sep{ font-family:'Barlow Condensed',sans-serif; font-size:2rem; font-weight:800;
+  color:var(--border); line-height:1; padding-top:2px; }
+.cd-expired{ font-family:'Barlow Condensed',sans-serif; font-size:1.1rem; font-weight:700;
+  color:var(--red); letter-spacing:.05em; }
 .chip{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
   border-radius:20px; padding:5px 16px; font-size:.8rem; color:var(--muted); }
 .chip strong{ color:var(--white); }
@@ -221,9 +230,48 @@ tr:hover td{ background:rgba(255,255,255,.04); }
   <div class="chips">
     <div class="chip">Entry deadline <strong>11 June 2026, 19:00</strong></div>
     <div class="chip">Entry fee <strong>£5.00</strong></div>
-    <div class="chip">Updated <strong>04 June 2026 at 21:15</strong></div>
+    <div class="chip">Updated <strong>05 June 2026 at 17:37</strong></div>
+  </div>
+  <div class="countdown-bar" id="cd-bar">
+    <div class="cd-unit"><span class="cd-num" id="cd-d">--</span><span class="cd-lbl">Days</span></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><span class="cd-num" id="cd-h">--</span><span class="cd-lbl">Hours</span></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><span class="cd-num" id="cd-m">--</span><span class="cd-lbl">Mins</span></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><span class="cd-num" id="cd-s">--</span><span class="cd-lbl">Secs</span></div>
   </div>
 </div>
+<script>
+(function() {
+  // Deadline passed in from Python config — ISO-compatible format
+  var deadline = new Date("2026-06-11T19:00:00");
+  var bar  = document.getElementById("cd-bar");
+  var dEl  = document.getElementById("cd-d");
+  var hEl  = document.getElementById("cd-h");
+  var mEl  = document.getElementById("cd-m");
+  var sEl  = document.getElementById("cd-s");
+  function pad(n) { return String(n).padStart(2,"0"); }
+  function tick() {
+    var now  = new Date();
+    var diff = deadline - now;
+    if (diff <= 0) {
+      bar.innerHTML = "<span class="cd-expired">⏰ Entry deadline has passed</span>";
+      return;
+    }
+    var days  = Math.floor(diff / 86400000);
+    var hours = Math.floor((diff % 86400000) / 3600000);
+    var mins  = Math.floor((diff % 3600000)  / 60000);
+    var secs  = Math.floor((diff % 60000)    / 1000);
+    dEl.textContent = days;
+    hEl.textContent = pad(hours);
+    mEl.textContent = pad(mins);
+    sEl.textContent = pad(secs);
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
 
 <!-- WHATSAPP BAR -->
 <div class="wa-bar">
@@ -267,7 +315,7 @@ tr:hover td{ background:rgba(255,255,255,.04); }
     <div class="sl">Possible Entrants</div>
   </div>
   <div class="stat-chip">
-    <div class="sv">25</div>
+    <div class="sv">30</div>
     <div class="sl">Predictions Received</div>
   </div>
   <div class="stat-chip" style="border-color:rgba(255,215,0,.3)">
@@ -640,7 +688,7 @@ tr:hover td{ background:rgba(255,255,255,.04); }
 
 <!-- FOOTER -->
 <div class="footer">
-  World Cup 2026 Bonanzaaaaa &nbsp;·&nbsp; Pre-Tournament Hub &nbsp;·&nbsp; Generated 04 June 2026 at 21:15
+  World Cup 2026 Bonanzaaaaa &nbsp;·&nbsp; Pre-Tournament Hub &nbsp;·&nbsp; Generated 05 June 2026 at 17:37
 </div>
 
 <script>
