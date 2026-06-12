@@ -333,6 +333,10 @@ tr:hover td{ background:rgba(255,255,255,.04); }
 }
 .pot-bar-row.open .pot-bar-pickers{ display:block; }
 .pot-bar-row.open .pot-bar-fill{ opacity:.7; }
+.bar-more-btn{ display:block; width:100%; margin-top:8px; padding:8px;
+  background:var(--dark); border:1px solid var(--border); border-radius:6px;
+  color:var(--muted); font-size:.8rem; font-weight:600; cursor:pointer; text-align:center; }
+.bar-more-btn:hover{ background:rgba(255,255,255,.04); color:var(--text); }
 .chart-wrap{ position:relative; height:220px; margin-top:8px; }
 
 /* Potluck multi-pot grid */
@@ -649,7 +653,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
     <h3>ℹ️ Latest Refresh — What's Included</h3>
     <div class="info-row">
       <span class="info-lbl">Generated</span>
-      <span class="info-val">12 June 2026 at 20:12</span>
+      <span class="info-val">12 June 2026 at 20:38</span>
     </div>
     <div class="info-row">
       <span class="info-lbl">Results included</span>
@@ -1126,7 +1130,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   </div>
 </div>
 
-<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 12 June 2026 at 20:12</div>
+<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 12 June 2026 at 20:38</div>
 
 <!-- ANNOUNCEMENT FLOATING BUTTON -->
 <button class="announce-fab" onclick="document.getElementById('announce-modal').classList.add('open')" id="announce-fab">
@@ -1138,7 +1142,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   <div class="modal-inner">
     <button class="modal-close" onclick="document.getElementById('announce-modal').classList.remove('open')">✕</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:800;color:var(--gold);margin-bottom:12px">📢 Latest Announcement</h2>
-    <div class="announce-from">From Danni · 12 June 2026 at 20:12</div>
+    <div class="announce-from">From Danni · 12 June 2026 at 20:38</div>
     <div class="announce-body" id="announce-body" style="margin-top:16px">👋
 
 We have KICK OFF!
@@ -1191,13 +1195,13 @@ function submitReport(method) {
   lines.push('');
   lines.push(msg);
   lines.push('');
-  lines.push('(Generated: 12 June 2026 at 20:12)');
+  lines.push('(Generated: 12 June 2026 at 20:38)');
   const bodyText = lines.join(String.fromCharCode(10));
   if (method === 'email') {
     const subject = 'WC2026 Leaderboard - Error Report';
     window.open('mailto:danielle.pearson@live.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText), '_blank');
   } else {
-    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 12 June 2026 at 20:12)';
+    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 12 June 2026 at 20:38)';
     window.open('https://wa.me/447909334688?text=' + encodeURIComponent(waText), '_blank');
   }
   // Close modal after short delay so user sees confirmation
@@ -2235,13 +2239,19 @@ function sortTable(tableId, colIdx, th) {
 let statsRendered = false;
 const chartInstances = {};
 
+let barCardCounter = 0;
+
 function barCard(title, data, colorFn) {
   if (!data || !data.length) return `<div class="stat-card"><div class="stat-card-hdr">${title}</div><div class="stat-card-body" style="color:var(--muted);font-size:.85rem;padding:20px 16px">No data yet.</div></div>`;
   const max = data[0]?.count || 1;
-  const rows = data.map(d => {
+  const cardId = `barcard-${barCardCounter++}`;
+  const LIMIT = 15;
+  const rows = data.map((d, di) => {
     const pickersHtml = d.pickers && d.pickers.length
       ? `<div class="bar-pickers">${d.pickers.join(', ')}</div>` : '';
-    return `<div class="bar-row" onclick="this.classList.toggle('open')">
+    const hiddenClass = di >= LIMIT ? ` bar-row-extra` : '';
+    const hiddenStyle = di >= LIMIT ? ` style="display:none"` : '';
+    return `<div class="bar-row${hiddenClass}"${hiddenStyle} onclick="this.classList.toggle('open')">
       <div class="bar-label">
         <span class="bar-lbl-name">${d.label}</span>
         <span class="bar-lbl-meta">${d.count} pick${d.count!==1?'s':''} &nbsp;·&nbsp; ${d.pct}%</span>
@@ -2250,10 +2260,23 @@ function barCard(title, data, colorFn) {
       ${pickersHtml}
     </div>`;
   }).join('');
-  return `<div class="stat-card">
+  const moreBtn = data.length > LIMIT
+    ? `<button class="bar-more-btn" onclick="event.stopPropagation();toggleBarCardMore('${cardId}',this)">Show all ${data.length} options ▼</button>`
+    : '';
+  return `<div class="stat-card" id="${cardId}">
     <div class="stat-card-hdr">${title} <span style="font-size:.8rem;font-weight:400;opacity:.65">(${data.length} options · tap to see who picked)</span></div>
-    <div class="stat-card-body">${rows}</div>
+    <div class="stat-card-body">${rows}${moreBtn}</div>
   </div>`;
+}
+
+function toggleBarCardMore(cardId, btn) {
+  const card = document.getElementById(cardId);
+  if (!card) return;
+  const extras = card.querySelectorAll('.bar-row-extra');
+  const opening = extras.length && extras[0].style.display === 'none';
+  extras.forEach(el => el.style.display = opening ? '' : 'none');
+  const total = extras.length + 15;
+  btn.textContent = opening ? 'Show fewer ▲' : `Show all ${total} options ▼`;
 }
 
 function doughnutCard(title, data, canvasId) {
@@ -2268,20 +2291,28 @@ function doughnutCard(title, data, canvasId) {
 
 function potluckCard(title, potData) {
   if (!potData || !potData.length) return `<div class="stat-card"><div class="stat-card-hdr">${title}</div><div class="stat-card-body" style="color:var(--muted)">No data yet.</div></div>`;
+  const LIMIT = 15;
   const pots = potData.map((pot) => {
     const max = pot.items[0]?.count || 1;
-    const bars = pot.items.map(d => {
+    const potId = `barcard-${barCardCounter++}`;
+    const bars = pot.items.map((d, di) => {
       const pickersHtml = d.pickers && d.pickers.length
         ? `<div class="pot-bar-pickers">${d.pickers.join(', ')}</div>` : '';
-      return `<div class="pot-bar-row" onclick="this.classList.toggle('open')">
+      const hiddenClass = di >= LIMIT ? ` bar-row-extra` : '';
+      const hiddenStyle = di >= LIMIT ? ` style="display:none"` : '';
+      return `<div class="pot-bar-row${hiddenClass}"${hiddenStyle} onclick="this.classList.toggle('open')">
         <div class="pot-bar-label"><span>${d.label}</span><span style="color:var(--muted)">${d.count}</span></div>
         <div class="pot-bar-track"><div class="pot-bar-fill" style="width:${(d.count/max*100).toFixed(1)}%;background:${barColor(d.pct)}"></div></div>
         ${pickersHtml}
       </div>`;
     }).join('');
-    return `<div class="pot-block">
+    const moreBtn = pot.items.length > LIMIT
+      ? `<button class="bar-more-btn" onclick="event.stopPropagation();toggleBarCardMore('${potId}',this)">Show all ${pot.items.length} options ▼</button>`
+      : '';
+    return `<div class="pot-block" id="${potId}">
       <h4>Pot ${pot.pot}</h4>
       ${bars}
+      ${moreBtn}
     </div>`;
   }).join('');
   return `<div class="stat-card" style="grid-column:1/-1">
