@@ -304,10 +304,6 @@ tr:hover td{ background:rgba(255,255,255,.04); }
 .upcoming-group{ font-size:.72rem; padding:2px 7px; border-radius:4px;
   background:rgba(255,255,255,.06); color:var(--muted); }
 .upcoming-time{ font-size:.78rem; color:var(--muted); }
-.stake-more-wrap{ display:inline; }
-.stake-more-hidden{ display:none; }
-.stake-expand-btn{ background:none; border:none; color:var(--gold); font-size:.7rem;
-  cursor:pointer; padding:0 2px; font-family:'Barlow',sans-serif; text-decoration:underline; }
 .upcoming-summary{ display:block; font-size:.72rem; color:var(--muted); margin-top:2px; }
 .upcoming-summary.you{ color:var(--green); font-weight:600; }
 .upcoming-card-item{ border-bottom:1px solid var(--border); }
@@ -317,19 +313,24 @@ tr:hover td{ background:rgba(255,255,255,.04); }
   background:var(--dark); border:1px solid var(--border); border-radius:6px;
   color:var(--muted); font-size:.82rem; font-weight:600; cursor:pointer; text-align:center; }
 .upcoming-more-btn:hover{ background:rgba(255,255,255,.04); color:var(--text); }
-.stake-row{ display:flex; align-items:baseline; gap:8px; padding:4px 0;
-  border-bottom:1px solid rgba(255,255,255,.04); font-size:.8rem; flex-wrap:wrap; }
-.stake-row:last-child{ border-bottom:none; }
-.stake-row.stake-mine{ background:rgba(46,204,113,.06); border-radius:4px; padding:4px 6px; }
+.stake-block{ padding:6px 0; border-bottom:1px solid rgba(255,255,255,.04); font-size:.8rem; }
+.stake-block:last-child{ border-bottom:none; }
+.stake-block.stake-mine{ background:rgba(46,204,113,.06); border-radius:4px; padding:6px; }
+.stake-header{ display:flex; align-items:baseline; gap:8px; }
 .stake-icon{ font-size:.85rem; flex-shrink:0; }
-.stake-name{ font-weight:600; color:var(--white); flex:1; min-width:120px; }
-.stake-count{ color:var(--gold); font-weight:600; white-space:nowrap; min-width:70px; }
-.stake-pickers{ color:var(--muted); font-size:.72rem; flex:2; }
-.stake-you{ color:var(--green); font-weight:600; font-size:.78rem; }
+.stake-name{ font-weight:600; color:var(--white); flex:1; }
+.stake-count{ color:var(--gold); font-weight:600; white-space:nowrap; flex-shrink:0; min-width:70px; text-align:right; }
+.stake-pickers-list{ margin-top:2px; padding-left:22px; padding-right:78px; color:var(--muted); font-size:.72rem; }
+.stake-pickers-group + .stake-pickers-group{ margin-top:3px; }
+.stake-type-hdr{ color:var(--gold); font-weight:600; font-size:.7rem; }
+.stake-picker-row{ display:inline; }
+.stake-picker-row:not(:last-child)::after{ content:", "; }
+.stake-picker-row.stake-you{ color:var(--green); font-weight:600; font-size:.78rem; }
+.stake-expand-btn{ background:none; border:none; color:var(--gold); font-size:.7rem;
+  cursor:pointer; padding:0 2px; font-family:'Barlow',sans-serif; text-decoration:underline; }
 .stake-mult{ display:inline-block; font-size:.65rem; font-weight:700; color:#000;
   background:var(--gold); border-radius:3px; padding:1px 4px; margin-left:2px;
   vertical-align:middle; line-height:1.4; }
-.stake-type-lbl{ color:var(--gold); font-weight:600; font-size:.7rem; }
 .stake-divider{ border-top:1px dashed var(--border); margin:6px 0; }
 
 /* ---- STATS ---- */
@@ -661,7 +662,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
 <!-- TABS -->
 <div class="tab-bar">
   <button class="tab-btn active" onclick="showTab('leaderboard',this)">🏆 Leaderboard</button>
-  <button class="tab-btn" onclick="showTab('feed',this)">📺 Results & Events</button>
+  <button class="tab-btn" onclick="showTab('feed',this)">📺 Matches & Events</button>
   <button class="tab-btn" onclick="showTab('mypicks',this)">📋 My Picks</button>
   <button class="tab-btn" onclick="showTab('playerstats',this)">⚽ Player Stats</button>
   <button class="tab-btn" id="transfers-tab-btn" onclick="showTab('transfers',this)" style="display:none">🔄 Player Transfers</button>
@@ -692,7 +693,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
     <h3>ℹ️ Latest Refresh — What's Included</h3>
     <div class="info-row">
       <span class="info-lbl">Generated</span>
-      <span class="info-val">14 June 2026 at 09:12</span>
+      <span class="info-val">14 June 2026 at 18:34</span>
     </div>
     <div class="info-row">
       <span class="info-lbl">Results included</span>
@@ -1177,7 +1178,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   </div>
 </div>
 
-<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 14 June 2026 at 09:12</div>
+<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 14 June 2026 at 18:34</div>
 
 <!-- ANNOUNCEMENT FLOATING BUTTON -->
 <button class="announce-fab" onclick="document.getElementById('announce-modal').classList.add('open')" id="announce-fab">
@@ -1189,7 +1190,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   <div class="modal-inner">
     <button class="modal-close" onclick="document.getElementById('announce-modal').classList.remove('open')">✕</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:800;color:var(--gold);margin-bottom:12px">📢 Latest Announcement</h2>
-    <div class="announce-from">From Danni · 14 June 2026 at 09:12</div>
+    <div class="announce-from">From Danni · 14 June 2026 at 18:34</div>
     <div class="announce-body" id="announce-body" style="margin-top:16px">👋
 
 We have KICK OFF!
@@ -1243,13 +1244,13 @@ function submitReport(method) {
   lines.push('');
   lines.push(msg);
   lines.push('');
-  lines.push('(Generated: 14 June 2026 at 09:12)');
+  lines.push('(Generated: 14 June 2026 at 18:34)');
   const bodyText = lines.join(String.fromCharCode(10));
   if (method === 'email') {
     const subject = 'WC2026 Leaderboard - Error Report';
     window.open('mailto:danielle.pearson@live.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText), '_blank');
   } else {
-    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 14 June 2026 at 09:12)';
+    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 14 June 2026 at 18:34)';
     window.open('https://wa.me/447909334688?text=' + encodeURIComponent(waText), '_blank');
   }
   // Close modal after short delay so user sees confirmation
@@ -1326,7 +1327,7 @@ function showTab(id, btn) {
   if (id === 'feed')        renderFeed();
 }
 
-// ---- Results & Events Feed ----
+// ---- Matches & Events Feed ----
 const FEED_EVENT_META = {
   goal:   { icon:'⚽', label:'Goal',               cls:'ei-goal'   },
   og:     { icon:'⚽', label:'Own goal',            cls:'ei-og'     },
@@ -1354,30 +1355,39 @@ function renderFeed() {
       const stakeId = `ustakes-${mi}`;
       const groupLabel = m.group_code ? `<span class="upcoming-group">Group ${m.group_code}</span>` : '';
 
-      // Collapsible picker list helper — collapses at >10 names
-      function pickerListHtml(names, idSuffix) {
+      // Render a group of pickers as a comma-separated, wrapping line,
+      // prefixed with a "Type:" heading. Collapses long lists behind a
+      // "+N more" toggle.
+      const PICKER_PREVIEW = 8;
+      let _pgCounter = 0;
+      function pickerGroupHtml(names, typeLabel) {
         if (!names || !names.length) return '';
-        if (names.length <= 10) return names.join(', ');
-        const preview = names.slice(0, 10).join(', ');
-        const rest    = names.slice(10).join(', ');
-        const moreId  = `pm-${mi}-${idSuffix}`;
-        return `${preview}, <span class="stake-more-wrap">` +
-          `<span class="stake-more-hidden" id="${moreId}" style="display:none">${rest}, </span>` +
-          `<button class="stake-expand-btn" onclick="togglePickerMore('${moreId}',this)">+${names.length-10} more</button></span>`;
+        const hdr = typeLabel ? `<span class="stake-type-hdr">${typeLabel}:</span> ` : '';
+        if (names.length <= PICKER_PREVIEW) {
+          const rows = names.map(n => `<span class="stake-picker-row">${n}</span>`).join('');
+          return `<div class="stake-pickers-group">${hdr}${rows}</div>`;
+        }
+        const gid = `pg-${mi}-${_pgCounter++}`;
+        const moreCount = names.length - PICKER_PREVIEW;
+        const previewRows = names.slice(0, PICKER_PREVIEW).map(n => `<span class="stake-picker-row">${n}</span>`).join('');
+        const restRows = names.slice(PICKER_PREVIEW).map(n => `<span class="stake-picker-row">${n}</span>`).join('');
+        const moreLabel = `+${moreCount} more`;
+        return `<div class="stake-pickers-group">${hdr}${previewRows}<span class="stake-more-hidden" id="${gid}" style="display:none">${restRows}</span> <button class="stake-expand-btn" data-more="${moreLabel}" onclick="toggleStakeMore('${gid}',this)">${moreLabel}</button></div>`;
       }
+      const youGroupHtml = `<div class="stake-pickers-group"><span class="stake-picker-row stake-you">you ✓</span></div>`;
 
-      // Team stake rows
-      function teamStakeRow(teamName, stake, idSuffix) {
+      // Team stake blocks
+      function teamStakeBlock(teamName, stake, idSuffix) {
         if (!stake.count) return '';
         if (filter && !stake.pickers.includes(filter)) return '';
-        const pickerHtml = filter
-          ? `<span class="stake-you">you ✓</span>`
-          : pickerListHtml(stake.pickers, idSuffix);
-        return `<div class="stake-row">
-          <span class="stake-icon">🏟️</span>
-          <span class="stake-name">${teamName}</span>
-          <span class="stake-count">${stake.count} picked</span>
-          <span class="stake-pickers">${pickerHtml}</span>
+        const pickersHtml = filter ? youGroupHtml : pickerGroupHtml(stake.pickers);
+        return `<div class="stake-block">
+          <div class="stake-header">
+            <span class="stake-icon">🏟️</span>
+            <span class="stake-name">${teamName}</span>
+            <span class="stake-count">${stake.count} picked</span>
+          </div>
+          <div class="stake-pickers-list">${pickersHtml}</div>
         </div>`;
       }
 
@@ -1386,36 +1396,41 @@ function renderFeed() {
         ? m.players.filter(p => p.pickers.includes(filter))
         : m.players;
 
+      const TYPE_EMOJI = { Outfield: '⚽', Triple: '💎', Naughty: '😈', Transfer: '🔄' };
+
       const playerRows = players.map((p, pi) => {
-        const multLabel = p.multiplier === 3 ? ' <span class="stake-mult">3×</span>'
-                        : p.multiplier === 2 ? ' <span class="stake-mult">2×</span>' : '';
-        const badges = p.badges.join('') + multLabel;
-        const isNaughtyOnly = p.badges.includes('😈') && !p.badges.includes('⚽') && !p.badges.includes('💎') && !p.badges.includes('🔄');
-        const nameStyle = isNaughtyOnly ? 'color:var(--muted)' : '';
-        let pickerHtml;
+        const typeEntries = Object.entries(p.pickers_by_type || {});
+        let badgeTypes, pickersHtml;
         if (filter) {
-          pickerHtml = `<span class="stake-you">you ✓</span>`;
+          // Only badge/multiplier the pick types this entrant actually picked
+          // them for — e.g. don't show a 3× Triple badge to someone who only
+          // picked this player for Naughty Step.
+          badgeTypes = typeEntries.filter(([lbl, names]) => names.includes(filter)).map(([lbl]) => lbl);
+          pickersHtml = youGroupHtml;
         } else {
-          const typeEntries = Object.entries(p.pickers_by_type || {});
-          if (typeEntries.length > 1) {
-            pickerHtml = typeEntries
-              .map(([lbl, names], ti) =>
-                `<span class="stake-type-lbl">${lbl}:</span> ${pickerListHtml(names, `p${pi}t${ti}`)}`
-              ).join(' &nbsp;·&nbsp; ');
-          } else {
-            pickerHtml = pickerListHtml(p.pickers, `p${pi}`);
-          }
+          badgeTypes = typeEntries.map(([lbl]) => lbl);
+          pickersHtml = typeEntries.map(([lbl, names]) => {
+            const groupLabel = (lbl === 'Outfield' && p.multiplier === 2) ? 'Double' : lbl;
+            return pickerGroupHtml(names, groupLabel);
+          }).join('');
         }
-        return `<div class="stake-row${filter ? ' stake-mine' : ''}">
-          <span class="stake-icon">${badges}</span>
-          <span class="stake-name" style="${nameStyle}">${p.name}</span>
-          <span class="stake-count">${p.count} picked</span>
-          <span class="stake-pickers">${pickerHtml}</span>
+        const multLabel = (badgeTypes.includes('Triple')   && p.multiplier === 3) ? ' <span class="stake-mult">3×</span>'
+                        : (badgeTypes.includes('Outfield') && p.multiplier === 2) ? ' <span class="stake-mult">2×</span>' : '';
+        const badges = badgeTypes.map(lbl => TYPE_EMOJI[lbl] || '').join('') + multLabel;
+        const isNaughtyOnly = badgeTypes.length === 1 && badgeTypes[0] === 'Naughty';
+        const nameStyle = isNaughtyOnly ? 'color:var(--muted)' : '';
+        return `<div class="stake-block${filter ? ' stake-mine' : ''}">
+          <div class="stake-header">
+            <span class="stake-icon">${badges}</span>
+            <span class="stake-name" style="${nameStyle}">${p.name}</span>
+            <span class="stake-count">${p.count} picked</span>
+          </div>
+          <div class="stake-pickers-list">${pickersHtml}</div>
         </div>`;
       }).join('');
 
-      const homeStake = teamStakeRow(m.home, m.home_team, 'h');
-      const awayStake = teamStakeRow(m.away, m.away_team, 'a');
+      const homeStake = teamStakeBlock(m.home, m.home_team, 'h');
+      const awayStake = teamStakeBlock(m.away, m.away_team, 'a');
       const hasStakes = homeStake || awayStake || playerRows;
 
       // Summary counts for always-visible hint
@@ -1634,6 +1649,14 @@ function toggleUpcomingStakes(id) {
   if (chv) chv.textContent = opening ? '▲' : '▼';
 }
 
+function toggleStakeMore(id, btn) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const opening = el.style.display === 'none';
+  el.style.display = opening ? 'inline' : 'none';
+  btn.textContent = opening ? 'show less' : btn.dataset.more;
+}
+
 function toggleUpcomingMore() {
   const el     = document.getElementById('upcoming-extra');
   const btnTop = document.getElementById('upcoming-more-btn-top');
@@ -1643,14 +1666,6 @@ function toggleUpcomingMore() {
   el.style.display = opening ? 'block' : 'none';
   if (btnTop) btnTop.style.display = opening ? 'block' : 'none';
   if (btnBot) btnBot.textContent = opening ? 'Show fewer fixtures ▲' : 'Show more fixtures ▼';
-}
-
-function togglePickerMore(id, btn) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const opening = el.style.display === 'none';
-  el.style.display = opening ? 'inline' : 'none';
-  btn.textContent = opening ? 'show less' : `+${(btn.textContent.match(/[0-9]+/)||['?'])[0]} more`;
 }
 
 // ---- Remaining columns toggle ----
