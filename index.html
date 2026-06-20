@@ -634,7 +634,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   .stats-bar{ gap:8px; }
   .stat-chip{ min-width:90px; padding:8px 10px; }
   .potluck-picks-inner{ grid-template-columns:1fr !important; }
-  .announce-fab span{ display:none; }
+  .announce-fab .announce-label{ display:none; }
   .upcoming-row{ flex-wrap:wrap; }
   .upcoming-row > div:first-child{ min-width:0; flex:1 1 100%; }
   .upcoming-right{ white-space:normal; flex-wrap:wrap; flex:1 1 100%;
@@ -751,7 +751,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
     <h3>ℹ️ Latest Refresh — What's Included</h3>
     <div class="info-row">
       <span class="info-lbl">Generated</span>
-      <span class="info-val">20 June 2026 at 11:19</span>
+      <span class="info-val">20 June 2026 at 12:25</span>
     </div>
     <div class="info-row">
       <span class="info-lbl">Results included</span>
@@ -1239,12 +1239,12 @@ body:not(.has-bonus) .bonus-col { display:none; }
   </div>
 </div>
 
-<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 20 June 2026 at 11:19</div>
+<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 20 June 2026 at 12:25</div>
 
 <!-- ANNOUNCEMENT FLOATING BUTTON -->
 <button class="announce-fab bonus" onclick="document.getElementById('announce-modal').classList.add('open'); markAnnouncementRead()" id="announce-fab">
   <span class="announce-star" id="announce-star"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" style="display:block"><path d="M12 2 L14.9 8.5 L22 9.3 L16.5 14.2 L18.2 21 L12 17.3 L5.8 21 L7.5 14.2 L2 9.3 L9.1 8.5 Z"/></svg></span>
-  📢 <span>Latest from Danni</span>
+  📢 <span class="announce-label">Latest from Danni</span>
   <span class="announce-badge" id="announce-badge">1</span>
 </button>
 <div class="announce-toast" id="announce-toast">🎉 New bonus — tap to see!</div>
@@ -1254,7 +1254,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   <div class="modal-inner">
     <button class="modal-close" onclick="document.getElementById('announce-modal').classList.remove('open')">✕</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:800;color:var(--gold);margin-bottom:12px">📢 Latest Announcement</h2>
-    <div class="announce-from">From Danni · 20 June 2026 at 11:19</div>
+    <div class="announce-from">From Danni · 20 June 2026 at 12:25</div>
     <div class="announce-body" id="announce-body" style="margin-top:16px">🚨 CHEEKY BONUS OPPPORTUNITY!🚨
 
 You have until the end of this round of group games to complete the attached form with your name and a witty one liner about this competition!
@@ -1351,13 +1351,13 @@ function submitReport(method) {
   lines.push('');
   lines.push(msg);
   lines.push('');
-  lines.push('(Generated: 20 June 2026 at 11:19)');
+  lines.push('(Generated: 20 June 2026 at 12:25)');
   const bodyText = lines.join(String.fromCharCode(10));
   if (method === 'email') {
     const subject = 'WC2026 Leaderboard - Error Report';
     window.open('mailto:danielle.pearson@live.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText), '_blank');
   } else {
-    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 20 June 2026 at 11:19)';
+    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 20 June 2026 at 12:25)';
     window.open('https://wa.me/447909334688?text=' + encodeURIComponent(waText), '_blank');
   }
   // Close modal after short delay so user sees confirmation
