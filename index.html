@@ -500,21 +500,21 @@ body:not(.has-bonus) .bonus-col { display:none; }
   50%{ box-shadow:0 4px 30px rgba(255,215,0,.9); }
 }
 .announce-toast{
-  position:fixed; bottom:88px; right:24px; z-index:899;
-  background:#1C2B3A; color:#F8F9FA; border:1px solid rgba(255,215,0,.4);
-  border-radius:12px; padding:10px 16px; font-family:'Barlow',sans-serif;
-  font-size:.85rem; font-weight:600; box-shadow:0 4px 18px rgba(0,0,0,.4);
+  position:fixed; bottom:calc(88px + env(safe-area-inset-bottom, 0px)); right:24px; z-index:901;
+  background:#1C2B3A; color:#F8F9FA; border:2px solid #FFD700;
+  border-radius:12px; padding:12px 18px; font-family:'Barlow',sans-serif;
+  font-size:.95rem; font-weight:700; box-shadow:0 6px 24px rgba(0,0,0,.55);
   opacity:0; transform:translateY(8px); transition:opacity .35s, transform .35s;
-  pointer-events:none; max-width:220px;
+  pointer-events:none; max-width:240px;
 }
 .announce-toast::after{
-  content:''; position:absolute; bottom:-7px; right:28px;
-  width:14px; height:14px; background:#1C2B3A; border-right:1px solid rgba(255,215,0,.4);
-  border-bottom:1px solid rgba(255,215,0,.4); transform:rotate(45deg);
+  content:''; position:absolute; bottom:-8px; right:28px;
+  width:14px; height:14px; background:#1C2B3A; border-right:2px solid #FFD700;
+  border-bottom:2px solid #FFD700; transform:rotate(45deg);
 }
 .announce-toast.show{ opacity:1; transform:translateY(0); }
 .announce-star{
-  position:absolute; top:-18px; left:-22px; font-size:2rem;
+  position:absolute; top:-8px; left:-10px; font-size:2rem;
   color:#00BCD4; animation:announce-twinkle 1.1s ease-in-out infinite; pointer-events:none;
   transition:transform .3s; display:block;
 }
@@ -644,6 +644,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   .feed-meta{ flex:1 1 100%; justify-content:flex-start; margin-top:4px; }
   .announce-modal .modal-inner{ max-height:90vh; max-height:90dvh; padding:24px 16px; }
   .announce-body{ padding:14px 16px; font-size:.95rem; line-height:1.6; text-align:left; }
+  .announce-toast{ font-size:1.05rem; padding:14px 20px; max-width:260px; right:16px; }
 }
 </style>
 </head>
@@ -751,7 +752,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
     <h3>ℹ️ Latest Refresh — What's Included</h3>
     <div class="info-row">
       <span class="info-lbl">Generated</span>
-      <span class="info-val">20 June 2026 at 16:20</span>
+      <span class="info-val">20 June 2026 at 16:24</span>
     </div>
     <div class="info-row">
       <span class="info-lbl">Results included</span>
@@ -1239,7 +1240,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   </div>
 </div>
 
-<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 20 June 2026 at 16:20</div>
+<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 20 June 2026 at 16:24</div>
 
 <!-- ANNOUNCEMENT FLOATING BUTTON -->
 <button class="announce-fab bonus" onclick="document.getElementById('announce-modal').classList.add('open'); markAnnouncementRead()" id="announce-fab">
@@ -1254,7 +1255,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   <div class="modal-inner">
     <button class="modal-close" onclick="document.getElementById('announce-modal').classList.remove('open')">✕</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:800;color:var(--gold);margin-bottom:12px">📢 Latest Announcement</h2>
-    <div class="announce-from">From Danni · 20 June 2026 at 16:20</div>
+    <div class="announce-from">From Danni · 20 June 2026 at 16:24</div>
     <div class="announce-body" id="announce-body" style="margin-top:16px">🚨 CHEEKY BONUS OPPPORTUNITY!🚨
 
 You have until the end of this round of group games to complete the attached form with your name and a witty one liner about this competition!
@@ -1324,7 +1325,7 @@ const BONUS_TOAST_KEY = 'wc2026_bonus_toast_seen';
   try { toastSeen = localStorage.getItem(BONUS_TOAST_KEY) || ''; } catch (e) {}
   if (toastSeen === ANNOUNCEMENT) return;
   setTimeout(() => { toast.classList.add('show'); }, 900);
-  setTimeout(() => { toast.classList.remove('show'); }, 7000);
+  setTimeout(() => { toast.classList.remove('show'); }, 10400);
   try { localStorage.setItem(BONUS_TOAST_KEY, ANNOUNCEMENT); } catch (e) {}
 })();
 
@@ -1351,13 +1352,13 @@ function submitReport(method) {
   lines.push('');
   lines.push(msg);
   lines.push('');
-  lines.push('(Generated: 20 June 2026 at 16:20)');
+  lines.push('(Generated: 20 June 2026 at 16:24)');
   const bodyText = lines.join(String.fromCharCode(10));
   if (method === 'email') {
     const subject = 'WC2026 Leaderboard - Error Report';
     window.open('mailto:danielle.pearson@live.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText), '_blank');
   } else {
-    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 20 June 2026 at 16:20)';
+    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 20 June 2026 at 16:24)';
     window.open('https://wa.me/447909334688?text=' + encodeURIComponent(waText), '_blank');
   }
   // Close modal after short delay so user sees confirmation
