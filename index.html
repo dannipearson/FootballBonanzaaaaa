@@ -1080,7 +1080,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
     <h3>ℹ️ Latest Refresh — What's Included</h3>
     <div class="info-row">
       <span class="info-lbl">Generated</span>
-      <span class="info-val">25 June 2026 at 13:24</span>
+      <span class="info-val">25 June 2026 at 13:35</span>
     </div>
     <div class="info-row">
       <span class="info-lbl">Results included</span>
@@ -1680,7 +1680,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   </div>
 </div>
 
-<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 25 June 2026 at 13:24</div>
+<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 25 June 2026 at 13:35</div>
 
 <!-- ANNOUNCEMENT FLOATING BUTTON -->
 <button class="announce-fab" onclick="document.getElementById('announce-modal').classList.add('open'); markAnnouncementRead()" id="announce-fab">
@@ -1695,7 +1695,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   <div class="modal-inner">
     <button class="modal-close" onclick="document.getElementById('announce-modal').classList.remove('open')">✕</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:800;color:var(--gold);margin-bottom:12px">📢 Latest Announcement</h2>
-    <div class="announce-from">From Danni · 25 June 2026 at 13:24</div>
+    <div class="announce-from">From Danni · 25 June 2026 at 13:35</div>
     <div class="announce-body" id="announce-body" style="margin-top:16px">Round 2 is all done! 
 
 Check your inboxes for the latest update!
@@ -1792,13 +1792,13 @@ function submitReport(method) {
   lines.push('');
   lines.push(msg);
   lines.push('');
-  lines.push('(Generated: 25 June 2026 at 13:24)');
+  lines.push('(Generated: 25 June 2026 at 13:35)');
   const bodyText = lines.join(String.fromCharCode(10));
   if (method === 'email') {
     const subject = 'WC2026 Leaderboard - Error Report';
     window.open('mailto:danielle.pearson@live.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText), '_blank');
   } else {
-    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 25 June 2026 at 13:24)';
+    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 25 June 2026 at 13:35)';
     window.open('https://wa.me/447909334688?text=' + encodeURIComponent(waText), '_blank');
   }
   // Close modal after short delay so user sees confirmation
@@ -4347,31 +4347,37 @@ function projForEntrant(name, scenario) {
   }
 
   // ── Players ──────────────────────────────────────────────────────────
+  // Include ALL picks - show inactive/elim as red with 0 pts
   const allPlayers = [
-    ...(picks.players||[]).filter(p=>p&&p.answer&&p.active!==false),
-    ...(picks.triple&&picks.triple.answer&&picks.triple.active!==false&&picks.triple.triple_status!=='void'
-      ?[{...picks.triple,isTriple:true}]:[])
+    ...(picks.players||[]).filter(p=>p&&p.answer),
+    ...(picks.triple&&picks.triple.answer ? [{...picks.triple,isTriple:true}] : [])
   ];
   let playerItems = [], scenarioPlayerBonus = 0;
   allPlayers.forEach(p => {
     const ps   = PS_BY_NAME[p.answer];
     const mult = p.isTriple ? 3 : (p.is_double_unique ? 2 : (ps ? ps.o_mult||1 : 1));
     const teamName = p.team_name || ps?.team_name || '';
-    const elim = isTeamElim(teamName);
+    const inactive = p.active === false || p.triple_status === 'void';
+    const elim = inactive || isTeamElim(teamName);
     const likely = elim ? 0 : playerLikelihood(ps);
     playerItems.push({ name:p.answer, likely, earned:p.score||0, mult, elim,
-      goals:ps?.goals||0, assists:ps?.assists||0, team:teamName, isTriple:!!p.isTriple });
+      goals:ps?.goals||0, assists:ps?.assists||0, team:teamName, isTriple:!!p.isTriple,
+      isVoided:p.triple_status==='void' });
   });
-  const playerTotalMult = playerItems.reduce((s,it)=>s+it.mult,0)||1;
-  const playerAvgLikely = Math.round(playerItems.reduce((s,it)=>s+it.likely*it.mult,0)/playerTotalMult);
-  const playerEarned = playerItems.reduce((s,it)=>s+(it.earned||0),0);
+  const playerActive = playerItems.filter(it=>!it.elim);
+  const playerTotalMult = playerActive.reduce((s,it)=>s+it.mult,0)||1;
+  const playerAvgLikely = playerActive.length
+    ? Math.round(playerActive.reduce((s,it)=>s+it.likely*it.mult,0)/playerTotalMult) : 0;
+  const playerEarned = playerActive.reduce((s,it)=>s+(it.earned||0),0);
 
   // ── Teams ─────────────────────────────────────────────────────────────
   let teamItems = [];
   Object.values(picks.teams||{}).forEach(pot =>
     (Array.isArray(pot)?pot:[pot]).forEach(p => {
-      if (!p||!p.answer||p.active===false) return;  // skip inactive/transferred picks
-      const elim   = isTeamElim(p.answer);
+      if (!p||!p.answer) return;
+      // Note: for team picks, active===false means the team is eliminated (not transferred).
+      // We still show these — red with 0 pts — so don't filter them out here.
+      const elim   = isTeamElim(p.answer) || p.active === false;
       const ts     = TEAM_BY_NAME[p.answer];
       let likely = elim ? 0 : teamLikelihood(ts);
       // Scenario winner boost — only if team is not eliminated
@@ -4380,11 +4386,11 @@ function projForEntrant(name, scenario) {
         pot:ts?.pot||0, stage:ts?.stage_reached||'GS' });
     })
   );
-  // Average over non-eliminated picks only (eliminated ones are 0 and skew the avg)
+  // Average and earned over non-eliminated picks only
   const teamActive = teamItems.filter(it=>!it.elim);
   const teamAvgLikely = teamActive.length
     ? Math.round(teamActive.reduce((s,it)=>s+it.likely,0)/teamActive.length) : 0;
-  const teamEarned = teamItems.reduce((s,it)=>s+(it.earned||0),0);
+  const teamEarned = teamActive.reduce((s,it)=>s+(it.earned||0),0);
 
   // ── QFs ───────────────────────────────────────────────────────────────
   let qfItems = [];
@@ -4575,8 +4581,11 @@ function projForEntrant(name, scenario) {
         goals:ps?.goals||0, team:teamName });
       transferEarned += p.score||0;
     });
-    const tTotalMult = transferItems.reduce((s,it)=>s+it.mult,0)||1;
-    transferAvgLikely = Math.round(transferItems.reduce((s,it)=>s+it.likely*it.mult,0)/tTotalMult);
+    const tActive = transferItems.filter(it=>!it.elim);
+    const tTotalMult = tActive.reduce((s,it)=>s+it.mult,0)||1;
+    transferAvgLikely = tActive.length
+      ? Math.round(tActive.reduce((s,it)=>s+it.likely*it.mult,0)/tTotalMult) : 0;
+    transferEarned = tActive.reduce((s,it)=>s+(it.earned||0),0);
   }
 
   // ── Scenario bonus total ───────────────────────────────────────────────
@@ -4629,11 +4638,11 @@ function renderCeiling() {
         const lkCol  = it.elim?'rgba(233,69,96,.7)':it.likely>=60?'var(--green)':it.likely>=30?'var(--gold)':'rgba(233,69,96,.6)';
         return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06)">
           <span style="flex:1;font-size:.7rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:${namCol}">
-            ${it.name}${it.isTriple?' 💎':''}${it.mult>1&&!it.isTriple?' ⭐':''}
+            ${it.name}${it.isVoided?' <span style="font-size:.54rem;color:rgba(233,69,96,.6)">(voided)</span>':it.isTriple?' 💎':(it.mult>1?' ⭐':'')}
             ${it.goals>0?`<span style="color:var(--muted)"> ${it.goals}⚽</span>`:''}
           </span>
           <span style="font-size:.64rem;font-weight:700;color:${lkCol};flex-shrink:0">${it.elim?'❌':it.likely+'%'}</span>
-          ${it.earned>0?`<span style="font-size:.6rem;color:var(--gold)">+${it.earned}</span>`:''}
+          ${!it.elim&&it.earned>0?`<span style="font-size:.6rem;color:var(--gold)">+${it.earned}</span>`:''}
         </div>`;
       },
     },
@@ -4645,7 +4654,7 @@ function renderCeiling() {
         return `<div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04)">
           <span style="flex:1;font-size:.68rem;color:${namCol}">${it.name} <span style="color:var(--muted);font-size:.6rem">P${it.pot}</span></span>
           <span style="font-size:.62rem;font-weight:700;color:${lkCol};flex-shrink:0">${it.elim?'❌':it.likely+'%'}</span>
-          ${it.earned>0?`<span style="font-size:.55rem;color:var(--gold)">+${it.earned}</span>`:''}
+          ${!it.elim&&it.earned>0?`<span style="font-size:.55rem;color:var(--gold)">+${it.earned}</span>`:''}
         </div>`;
       },
     },
@@ -4706,13 +4715,14 @@ function renderCeiling() {
     ...(HAS_TRANSFERS ? [{
       key:'transfer', label:'🔄 Transfers', avgKey:'transferAvgLikely', itemsKey:'transferItems', earnedKey:'transferEarned',
       renderItem: it => {
-        const col = it.elim?'var(--muted)':it.likely>=60?'var(--green)':it.likely>=30?'var(--gold)':'rgba(233,69,96,.8)';
+        const namColT = it.elim ? 'rgba(233,69,96,.7)' : 'var(--white)';
+        const col = it.elim?'rgba(233,69,96,.7)':it.likely>=60?'var(--green)':it.likely>=30?'var(--gold)':'rgba(233,69,96,.8)';
         return `<div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04)">
-          <span style="flex:1;font-size:.68rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+          <span style="flex:1;font-size:.68rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:${namColT}">
             ${it.name}${it.mult>1?' ⭐':''} <span style="color:var(--muted);font-size:.6rem">${it.team}</span>
           </span>
-          <span style="font-size:.65rem;font-weight:700;color:${col};flex-shrink:0">${it.elim?'Out':it.likely+'%'}</span>
-          <span style="font-size:.6rem;color:var(--gold);min-width:24px;text-align:right">${it.earned>0?'+'+it.earned:''}</span>
+          <span style="font-size:.65rem;font-weight:700;color:${col};flex-shrink:0">${it.elim?'❌':it.likely+'%'}</span>
+          ${!it.elim&&it.earned>0?`<span style="font-size:.6rem;color:var(--gold);min-width:24px;text-align:right">+${it.earned}</span>`:''}
         </div>`;
       },
     }] : []),
