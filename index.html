@@ -1080,7 +1080,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
     <h3>ℹ️ Latest Refresh — What's Included</h3>
     <div class="info-row">
       <span class="info-lbl">Generated</span>
-      <span class="info-val">25 June 2026 at 08:17</span>
+      <span class="info-val">25 June 2026 at 08:39</span>
     </div>
     <div class="info-row">
       <span class="info-lbl">Results included</span>
@@ -1680,7 +1680,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   </div>
 </div>
 
-<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 25 June 2026 at 08:17</div>
+<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 25 June 2026 at 08:39</div>
 
 <!-- ANNOUNCEMENT FLOATING BUTTON -->
 <button class="announce-fab" onclick="document.getElementById('announce-modal').classList.add('open'); markAnnouncementRead()" id="announce-fab">
@@ -1695,7 +1695,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   <div class="modal-inner">
     <button class="modal-close" onclick="document.getElementById('announce-modal').classList.remove('open')">✕</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:800;color:var(--gold);margin-bottom:12px">📢 Latest Announcement</h2>
-    <div class="announce-from">From Danni · 25 June 2026 at 08:17</div>
+    <div class="announce-from">From Danni · 25 June 2026 at 08:39</div>
     <div class="announce-body" id="announce-body" style="margin-top:16px">Round 2 is all done! 
 
 Check your inboxes for the latest update!
@@ -1792,13 +1792,13 @@ function submitReport(method) {
   lines.push('');
   lines.push(msg);
   lines.push('');
-  lines.push('(Generated: 25 June 2026 at 08:17)');
+  lines.push('(Generated: 25 June 2026 at 08:39)');
   const bodyText = lines.join(String.fromCharCode(10));
   if (method === 'email') {
     const subject = 'WC2026 Leaderboard - Error Report';
     window.open('mailto:danielle.pearson@live.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText), '_blank');
   } else {
-    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 25 June 2026 at 08:17)';
+    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 25 June 2026 at 08:39)';
     window.open('https://wa.me/447909334688?text=' + encodeURIComponent(waText), '_blank');
   }
   // Close modal after short delay so user sees confirmation
@@ -4242,7 +4242,7 @@ function setProjPreset(preset) {
   let indices = [];
   if (preset==='top5')    indices = [0,1,2,3,4];
   if (preset==='chasing') indices = [5,6,7,8,9];
-  if (preset==='spoon')   indices = [n-5,n-4,n-3,n-2,n-1]; // bottom 5 = wooden spoon area
+  if (preset==='spoon')   indices = [n-1,n-2,n-3,n-4,n-5]; // bottom 5, lowest points first
   _projSelected = indices.filter(i=>i>=0&&i<n).map(i=>LB_DATA[i].entrant_name);
   _projIsDefault = false;
   _renderProjChips();
