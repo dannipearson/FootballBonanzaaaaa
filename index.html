@@ -1080,7 +1080,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
     <h3>ℹ️ Latest Refresh — What's Included</h3>
     <div class="info-row">
       <span class="info-lbl">Generated</span>
-      <span class="info-val">25 June 2026 at 14:02</span>
+      <span class="info-val">25 June 2026 at 14:16</span>
     </div>
     <div class="info-row">
       <span class="info-lbl">Results included</span>
@@ -1680,7 +1680,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   </div>
 </div>
 
-<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 25 June 2026 at 14:02</div>
+<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 25 June 2026 at 14:16</div>
 
 <!-- ANNOUNCEMENT FLOATING BUTTON -->
 <button class="announce-fab" onclick="document.getElementById('announce-modal').classList.add('open'); markAnnouncementRead()" id="announce-fab">
@@ -1695,7 +1695,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   <div class="modal-inner">
     <button class="modal-close" onclick="document.getElementById('announce-modal').classList.remove('open')">✕</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:800;color:var(--gold);margin-bottom:12px">📢 Latest Announcement</h2>
-    <div class="announce-from">From Danni · 25 June 2026 at 14:02</div>
+    <div class="announce-from">From Danni · 25 June 2026 at 14:16</div>
     <div class="announce-body" id="announce-body" style="margin-top:16px">Round 2 is all done! 
 
 Check your inboxes for the latest update!
@@ -1793,13 +1793,13 @@ function submitReport(method) {
   lines.push('');
   lines.push(msg);
   lines.push('');
-  lines.push('(Generated: 25 June 2026 at 14:02)');
+  lines.push('(Generated: 25 June 2026 at 14:16)');
   const bodyText = lines.join(String.fromCharCode(10));
   if (method === 'email') {
     const subject = 'WC2026 Leaderboard - Error Report';
     window.open('mailto:danielle.pearson@live.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText), '_blank');
   } else {
-    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 25 June 2026 at 14:02)';
+    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 25 June 2026 at 14:16)';
     window.open('https://wa.me/447909334688?text=' + encodeURIComponent(waText), '_blank');
   }
   // Close modal after short delay so user sees confirmation
@@ -4445,6 +4445,11 @@ function projForEntrant(name, scenario) {
       let scenarioWin = false;
       if (isScenarioCorrect && p.score === 0 && !elim) { likely = 100; scenarioWin = true; potluckScenarioBonus += PTS.potluck_correct; }
       const st = p.score > 0 ? 'confirmed' : truthStatus(qid, p.answer, p.team_id||'');
+      // Scenario applied with no override: treat on_track as "would score"
+      if (!scenarioWin && _scenarioActive && p.score===0 && !elim && !scenarioAnswer &&
+          (st === 'on_track' || st === 'confirmed_correct')) {
+        scenarioWin = true; potluckScenarioBonus += PTS.potluck_correct;
+      }
       const yesNo = p.score>0?'✓ scored':likely>=70?'✓ likely':likely>=35?'? maybe':'✗ unlikely';
       // Resolve team_id from TEAM_BY_NAME so truthStatus can use it for matching
       const _plTeam = TEAM_BY_NAME[p.answer] || TEAM_BY_NAME[(p.team_name||'')];
@@ -4484,7 +4489,12 @@ function projForEntrant(name, scenario) {
         likely = 100; scenarioWin = true; catScenarioBonus += PTS.cat_correct;
       }
     }
-    const st   = p.score>0 ? 'confirmed' : truthStatus(qid, p.answer, p.team_id||'');
+    // Scenario applied with no override: treat on_track as "would score" for header display
+    const st = p.score>0 ? 'confirmed' : truthStatus(qid, p.answer, p.team_id||'');
+    if (!scenarioWin && _scenarioActive && p.score===0 && !elim && !catOver[qid] &&
+        (st === 'on_track' || st === 'confirmed_correct')) {
+      scenarioWin = true; catScenarioBonus += PTS.cat_correct;
+    }
     const yesNo= p.score>0?'✓ scored':likely>=70?'✓ likely':likely>=35?'? maybe':'✗ unlikely';
     catItems.push({ label:lbl, answer:p.answer, likely, earned:p.score||0, status:st, qid, elim, scenarioWin, yesNo });
   });
@@ -4835,20 +4845,17 @@ function renderCeiling() {
     const dispName = isMobile
       ? c.name.split(' ')[0]
       : (c.name.length>18 ? c.name.split(' ')[0] : c.name);
-    // Compute scenario delta for this column
-    const allProj_h  = SECTIONS.reduce((s,sec)=>s+secProjPts(c,sec),0);
-    const baseProj_h = SECTIONS.reduce((s,sec)=>s+secProjPts(baseC,sec),0);
-    const delta_h    = allProj_h - baseProj_h;
+    const sb_h = _scenarioActive ? (c.scenarioBonus||0) : 0;
     html += `<div class="proj-col-header" style="color:${c.color};padding:${hdrPad};
-      border-top:3px solid ${c.color};background:${delta_h>0?c.color+'28':c.color+'12'}">
+      border-top:3px solid ${c.color};background:${sb_h>0?c.color+'28':c.color+'12'}">
       <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:${nameSz};font-weight:700">${dispName}</div>
       <div style="font-family:'Barlow Condensed',sans-serif;font-size:${scoreSz};font-weight:800;line-height:1;margin-top:1px">${c.curr}</div>
       <div style="font-size:${rnkSz};color:var(--muted);font-weight:400">#${c.rank}</div>
-      ${delta_h>0?`<div style="margin-top:4px;padding:3px 6px;border-radius:5px;background:rgba(46,204,113,.2);border:1px solid rgba(46,204,113,.5)">
-        <div style="font-size:.58rem;color:rgba(46,204,113,.9);font-weight:600;letter-spacing:.02em">IF SCENARIO CORRECT</div>
-        <div style="display:flex;align-items:baseline;gap:4px;margin-top:1px">
-          <span style="font-size:.75rem;color:rgba(46,204,113,.9);font-weight:700">+${delta_h} pts</span>
-          <span style="font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:800;color:var(--white);line-height:1">→ ${c.curr+delta_h}</span>
+      ${sb_h>0?`<div style="margin-top:4px;padding:3px 6px;border-radius:5px;background:rgba(46,204,113,.2);border:1px solid rgba(46,204,113,.5);text-align:center">
+        <div style="font-size:.55rem;color:rgba(46,204,113,.9);font-weight:600;letter-spacing:.03em;text-transform:uppercase">Scores if correct</div>
+        <div style="display:flex;align-items:baseline;gap:5px;justify-content:center;margin-top:2px">
+          <span style="font-size:.85rem;color:rgba(46,204,113,.95);font-weight:800">+${sb_h}</span>
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;color:var(--white);line-height:1">→ ${c.curr+sb_h}</span>
         </div>
       </div>`:''}
     </div>`;
@@ -4974,19 +4981,20 @@ function renderCeiling() {
     // Header row: name + score per entrant
     rows += `<div style="display:flex;min-width:${MOB_TOTAL}px;border-bottom:2px solid var(--border)">
       ${stickyCell('<span style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.03em">Cat.</span>', STICKY_HDR)}
-      ${cols.map((c,ci) => {
-        const md = SECTIONS.reduce((s,sec)=>s+secProjPts(c,sec),0)
-                 - SECTIONS.reduce((s,sec)=>s+secProjPts(baseCols[ci],sec),0);
+      ${cols.map(c => {
+        const mb = _scenarioActive ? (c.scenarioBonus||0) : 0;
         return `<div style="width:${MOB_COL_W}px;min-width:${MOB_COL_W}px;flex-shrink:0;
-          padding:3px 4px;text-align:center;background:${md>0?c.color+'28':c.color+'14'};border-right:1px solid var(--border)">
+          padding:3px 4px;text-align:center;background:${mb>0?c.color+'28':c.color+'14'};border-right:1px solid var(--border)">
           <div style="font-size:.62rem;font-weight:700;color:${c.color};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.name.split(' ')[0]}</div>
           <div style="font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:800;color:${c.color};line-height:1">${c.curr}</div>
-          ${md>0?`<div style="margin-top:3px;padding:2px 4px;border-radius:4px;background:rgba(46,204,113,.2);border:1px solid rgba(46,204,113,.5)">
-            <div style="font-size:.44rem;color:rgba(46,204,113,.9);font-weight:600">IF CORRECT</div>
-            <div style="font-size:.56rem;color:rgba(46,204,113,.9);font-weight:700">+${md} pts</div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-size:.9rem;font-weight:800;color:var(--white);line-height:1">→ ${c.curr+md}</div>
+          ${mb>0?`<div style="margin-top:3px;padding:2px 4px;border-radius:4px;background:rgba(46,204,113,.2);border:1px solid rgba(46,204,113,.5);text-align:center">
+            <div style="font-size:.42rem;color:rgba(46,204,113,.9);font-weight:600;letter-spacing:.03em;text-transform:uppercase">Scores if correct</div>
+            <div style="display:flex;align-items:baseline;gap:3px;justify-content:center;margin-top:1px">
+              <span style="font-size:.6rem;color:rgba(46,204,113,.95);font-weight:800">+${mb}</span>
+              <span style="font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:800;color:var(--white);line-height:1">→ ${c.curr+mb}</span>
+            </div>
           </div>`:''  }
-          ${md===0?`<div style="font-size:.5rem;color:var(--muted)">#${c.rank}</div>`:''  }
+          ${mb===0?`<div style="font-size:.5rem;color:var(--muted)">#${c.rank}</div>`:''  }
         </div>`;
       }).join('')}
     </div>`;
