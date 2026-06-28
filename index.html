@@ -1101,7 +1101,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
     <h3>ℹ️ Latest Refresh — What's Included</h3>
     <div class="info-row">
       <span class="info-lbl">Generated</span>
-      <span class="info-val">28 June 2026 at 15:36</span>
+      <span class="info-val">28 June 2026 at 15:44</span>
     </div>
     <div class="info-row">
       <span class="info-lbl">Results included</span>
@@ -1764,7 +1764,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   </div>
 </div>
 
-<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 28 June 2026 at 15:36</div>
+<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 28 June 2026 at 15:44</div>
 
 <!-- ANNOUNCEMENT FLOATING BUTTON -->
 <button class="announce-fab" onclick="document.getElementById('announce-modal').classList.add('open'); markAnnouncementRead()" id="announce-fab">
@@ -1779,7 +1779,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   <div class="modal-inner">
     <button class="modal-close" onclick="document.getElementById('announce-modal').classList.remove('open')">✕</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:800;color:var(--gold);margin-bottom:12px">📢 Latest Announcement</h2>
-    <div class="announce-from">From Danni · 28 June 2026 at 15:36</div>
+    <div class="announce-from">From Danni · 28 June 2026 at 15:44</div>
     <div class="announce-body" id="announce-body" style="margin-top:16px">Round 3 is done...
 
 ...PLAYER TRANSFERS ARE OPEN!
@@ -1874,13 +1874,13 @@ function submitReport(method) {
   lines.push('');
   lines.push(msg);
   lines.push('');
-  lines.push('(Generated: 28 June 2026 at 15:36)');
+  lines.push('(Generated: 28 June 2026 at 15:44)');
   const bodyText = lines.join(String.fromCharCode(10));
   if (method === 'email') {
     const subject = 'WC2026 Leaderboard - Error Report';
     window.open('mailto:danielle.pearson@live.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText), '_blank');
   } else {
-    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 28 June 2026 at 15:36)';
+    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 28 June 2026 at 15:44)';
     window.open('https://wa.me/447909334688?text=' + encodeURIComponent(waText), '_blank');
   }
   // Close modal after short delay so user sees confirmation
@@ -4292,8 +4292,18 @@ function _expectedTeamPts(ts) {
   if (!ts || ts.is_eliminated) return 0;
 
   const stageRank = STAGE_RANKS[ts.stage_reached || 'GS'] || 0;
+  // stageRank meaning:
+  //   0 = still in group stage (GS)
+  //   1 = in R32 (qualified, R32 match still to play)
+  //   2 = in R16 (won R32, R16 match still to play)  ← DR Congo is here
+  //   3 = in QF  (won R16, QF match still to play)
+  //   4 = in SF  (won QF,  SF match still to play)
+  //   5 = in F   (won SF,  Final still to play)
+  //   6 = Won
 
-  // Team strength (same as in expectedPlayerPoints)
+  if (stageRank >= 6) return 0; // tournament winner, no points left
+
+  // Team strength
   function tStr(t) {
     if (!t || t.is_eliminated) return 0;
     const potBase = ({1:90, 2:72, 3:52, 4:34})[t.pot || 4] || 34;
@@ -4311,7 +4321,7 @@ function _expectedTeamPts(ts) {
 
   const myStr = tStr(ts);
 
-  // Average opponent strength at each KO round (same as expectedPlayerPoints)
+  // Typical opponent strength at each KO round — skewed by pot (stronger teams face weaker R32 opponents)
   const AVG_OPP = {
     R32: ({1:45, 2:50, 3:55, 4:60})[ts.pot || 4] || 52,
     R16: ({1:62, 2:58, 3:52, 4:46})[ts.pot || 4] || 56,
@@ -4320,86 +4330,76 @@ function _expectedTeamPts(ts) {
     F:   78,
   };
 
-  // P(win each match) — already 1.0 if that round is behind them
-  const alreadyR32 = stageRank >= 1;
-  const alreadyR16 = stageRank >= 2;
-  const alreadyQF  = stageRank >= 3;
-  const alreadySF  = stageRank >= 4;
-  const alreadyF   = stageRank >= 5;
+  // P(win) for each remaining match — all matches from current stage onwards
+  // Use bracket-aware QF likelihood as anchor for R16 (if applicable)
+  let pWinR32 = 0, pWinR16 = 0, pWinQF = 0, pWinSF = 0, pWinF = 0;
 
-  // For R16, use bracket-aware QF likelihood as a sanity anchor.
-  // P(reach QF) from bracket = _qfBracketLikelihood / 100
-  // That equals P(win R32) * P(win R16), so we can back out P(win R16 | won R32).
-  let pWinR32, pWinR16, pReachR32, pReachR16, pReachQF;
+  if (stageRank <= 0) pWinR32 = wP(myStr, AVG_OPP.R32);
+  if (stageRank <= 1) {
+    // Use _qfBracketLikelihood to get P(win R32 AND R16) — back out P(win R16)
+    const bracketQF  = _qfBracketLikelihood(ts.team_name) / 100; // P(reach QF from current pos)
+    const pR32       = stageRank === 0 ? pWinR32 : 1.0;           // if already in R16, R32 is done
+    const pWinR16raw = pR32 > 0.01 ? Math.min(0.90, bracketQF / pR32) : wP(myStr, AVG_OPP.R16);
+    pWinR16 = Math.max(0.10, pWinR16raw);
+  }
+  if (stageRank <= 2) pWinQF  = wP(myStr, AVG_OPP.QF);
+  if (stageRank <= 3) pWinSF  = wP(myStr, AVG_OPP.SF);
+  if (stageRank <= 4) pWinF   = wP(myStr, AVG_OPP.F);
 
-  // GS qualification (if still in group stage — shouldn't happen mid-KO but guard it)
-  let pQual = 1.0;
+  // Cumulative P(reach and WIN each future round) → earns 3pts
+  // Starting from current position: P of the NEXT match is just pWin (they're already there).
+  // Each subsequent round requires winning all prior ones.
+  let expPts = 0;
+
   if (stageRank === 0) {
+    // Still in GS — must qualify first (rough estimate), then win R32, R16, etc.
     const pts  = ts.points_group_stage || 0;
     const pot  = ts.pot || 4;
     const gsP  = Math.max(ts.played || 1, 1);
     const ppg  = pts / gsP;
     const potBase = ({1:0.82, 2:0.68, 3:0.52, 4:0.32})[pot] || 0.50;
     const fb   = Math.min(0.15, (ppg - 1.0) * 0.08);
-    pQual = Math.min(0.97, Math.max(0.05, potBase + fb));
-  }
+    const pQual = Math.min(0.97, Math.max(0.05, potBase + fb));
+    const p1 = pQual * pWinR32;      // P(win R32)
+    const p2 = p1    * pWinR16;      // P(win R16)
+    const p3 = p2    * pWinQF;       // P(win QF)
+    const p4 = p3    * pWinSF;       // P(win SF)
+    const p5 = p4    * pWinF;        // P(win F)
+    expPts = (p1 + p2 + p3 + p4 + p5) * 3;
 
-  pReachR32 = alreadyR32 ? 1.0 : pQual;
+  } else if (stageRank === 1) {
+    // In R32 — next match is R32
+    const p1 = pWinR32;
+    const p2 = p1 * pWinR16;
+    const p3 = p2 * pWinQF;
+    const p4 = p3 * pWinSF;
+    const p5 = p4 * pWinF;
+    expPts = (p1 + p2 + p3 + p4 + p5) * 3;
 
-  if (alreadyR32) {
-    pWinR32 = 1.0; // already through, that win already scored
-    pReachR16 = alreadyR16 ? 1.0 : wP(myStr, AVG_OPP.R32);
-  } else {
-    pWinR32   = wP(myStr, AVG_OPP.R32);
-    pReachR16 = pReachR32 * pWinR32;
-  }
+  } else if (stageRank === 2) {
+    // In R16 — next match is R16 (e.g. DR Congo vs England)
+    const p1 = pWinR16;             // P(win this R16 match)
+    const p2 = p1 * pWinQF;
+    const p3 = p2 * pWinSF;
+    const p4 = p3 * pWinF;
+    expPts = (p1 + p2 + p3 + p4) * 3;
 
-  // Bracket-aware QF probability as anchor
-  if (alreadyQF) {
-    pReachQF = 1.0;
-  } else if (stageRank <= 1) {
-    const bracketQF = _qfBracketLikelihood(ts.team_name) / 100;
-    pReachQF = stageRank === 0 ? pQual * bracketQF : bracketQF;
-  } else {
-    pReachQF = pReachR16 * wP(myStr, AVG_OPP.R16);
-  }
+  } else if (stageRank === 3) {
+    // In QF
+    const p1 = pWinQF;
+    const p2 = p1 * pWinSF;
+    const p3 = p2 * pWinF;
+    expPts = (p1 + p2 + p3) * 3;
 
-  if (alreadyR16) {
-    pWinR16 = 1.0;
-  } else {
-    // Back out implied P(win R16) from bracket QF probability
-    pWinR16 = pReachR16 > 0.01 ? Math.min(0.90, pReachQF / pReachR16) : wP(myStr, AVG_OPP.R16);
-  }
+  } else if (stageRank === 4) {
+    // In SF
+    const p1 = pWinSF;
+    const p2 = p1 * pWinF;
+    expPts = (p1 + p2) * 3;
 
-  const pWinQF = alreadyQF ? 1.0 : wP(myStr, AVG_OPP.QF);
-  const pWinSF = alreadySF ? 1.0 : wP(myStr, AVG_OPP.SF);
-  const pWinF  = alreadyF  ? 1.0 : wP(myStr, AVG_OPP.F);
-
-  const pReachSF  = alreadySF ? 1.0 : pReachQF  * pWinQF;
-  const pReachF   = alreadyF  ? 1.0 : pReachSF  * pWinSF;
-
-  // Expected points = 3pts × P(win each future match)
-  // A round that's already been won contributes 0 future points (already scored).
-  const expPts =
-    (!alreadyR32 ? 0 : 0)                              // R32 already done if in R16+
-    + (alreadyR16 ? 0 : pReachR16 * pWinR16 * 3)      // win R16 match → 3pts
-    + (alreadyQF  ? 0 : pReachQF  * pWinQF  * 3)      // win QF → 3pts
-    + (alreadySF  ? 0 : pReachSF  * pWinSF  * 3)      // win SF → 3pts
-    + (alreadyF   ? 0 : pReachF   * pWinF   * 3);     // win F → 3pts
-
-  // Also: if still in R32 (just qualified from GS), include the R32 win probability
-  if (!alreadyR32) {
-    return pReachR32 * pWinR32 * 3  // win R32
-      + pReachR16 * pWinR16 * 3
-      + pReachQF  * pWinQF  * 3
-      + pReachSF  * pWinSF  * 3
-      + pReachF   * pWinF   * 3;
-  }
-  if (!alreadyR16) {
-    return pReachR16 * pWinR16 * 3   // need to win R32 first to get here, already in pReachR16
-      + pReachQF  * pWinQF  * 3
-      + pReachSF  * pWinSF  * 3
-      + pReachF   * pWinF   * 3;
+  } else if (stageRank === 5) {
+    // In Final
+    expPts = pWinF * 3;
   }
 
   return Math.round(expPts * 10) / 10;
