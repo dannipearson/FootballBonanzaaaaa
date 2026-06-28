@@ -1101,7 +1101,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
     <h3>ℹ️ Latest Refresh — What's Included</h3>
     <div class="info-row">
       <span class="info-lbl">Generated</span>
-      <span class="info-val">28 June 2026 at 15:51</span>
+      <span class="info-val">28 June 2026 at 16:02</span>
     </div>
     <div class="info-row">
       <span class="info-lbl">Results included</span>
@@ -1764,7 +1764,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   </div>
 </div>
 
-<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 28 June 2026 at 15:51</div>
+<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 28 June 2026 at 16:02</div>
 
 <!-- ANNOUNCEMENT FLOATING BUTTON -->
 <button class="announce-fab" onclick="document.getElementById('announce-modal').classList.add('open'); markAnnouncementRead()" id="announce-fab">
@@ -1779,7 +1779,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   <div class="modal-inner">
     <button class="modal-close" onclick="document.getElementById('announce-modal').classList.remove('open')">✕</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:800;color:var(--gold);margin-bottom:12px">📢 Latest Announcement</h2>
-    <div class="announce-from">From Danni · 28 June 2026 at 15:51</div>
+    <div class="announce-from">From Danni · 28 June 2026 at 16:02</div>
     <div class="announce-body" id="announce-body" style="margin-top:16px">Round 3 is done...
 
 ...PLAYER TRANSFERS ARE OPEN!
@@ -1874,13 +1874,13 @@ function submitReport(method) {
   lines.push('');
   lines.push(msg);
   lines.push('');
-  lines.push('(Generated: 28 June 2026 at 15:51)');
+  lines.push('(Generated: 28 June 2026 at 16:02)');
   const bodyText = lines.join(String.fromCharCode(10));
   if (method === 'email') {
     const subject = 'WC2026 Leaderboard - Error Report';
     window.open('mailto:danielle.pearson@live.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText), '_blank');
   } else {
-    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 28 June 2026 at 15:51)';
+    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 28 June 2026 at 16:02)';
     window.open('https://wa.me/447909334688?text=' + encodeURIComponent(waText), '_blank');
   }
   // Close modal after short delay so user sees confirmation
@@ -4331,20 +4331,64 @@ function _expectedTeamPts(ts) {
   };
 
   // P(win) for each remaining match — all matches from current stage onwards
-  // Use bracket-aware QF likelihood as anchor for R16 (if applicable)
+  // Note: _qfBracketLikelihood computes P(win R32) * P(win R16), so only use it
+  // for teams still in R32 or GS. For teams already in R16+, compute directly.
   let pWinR32 = 0, pWinR16 = 0, pWinQF = 0, pWinSF = 0, pWinF = 0;
 
   if (stageRank <= 0) pWinR32 = wP(myStr, AVG_OPP.R32);
-  if (stageRank <= 1) {
-    // Use _qfBracketLikelihood to get P(win R32 AND R16) — back out P(win R16)
-    const bracketQF  = _qfBracketLikelihood(ts.team_name) / 100; // P(reach QF from current pos)
-    const pR32       = stageRank === 0 ? pWinR32 : 1.0;           // if already in R16, R32 is done
-    const pWinR16raw = pR32 > 0.01 ? Math.min(0.90, bracketQF / pR32) : wP(myStr, AVG_OPP.R16);
-    pWinR16 = Math.max(0.10, pWinR16raw);
+
+  if (stageRank === 0 || stageRank === 1) {
+    // Use _qfBracketLikelihood (= P(win R32) * P(win R16)) to back out pWinR16
+    const bracketQF  = _qfBracketLikelihood(ts.team_name) / 100;
+    const pR32       = stageRank === 0 ? pWinR32 : wP(myStr, AVG_OPP.R32); // their R32 win prob
+    pWinR16 = pR32 > 0.01 ? Math.min(0.90, bracketQF / pR32) : wP(myStr, AVG_OPP.R16);
+    pWinR16 = Math.max(0.10, pWinR16);
+  } else if (stageRank === 2) {
+    // Already in R16 — find actual opponent via bracket if possible.
+    // BRACKET.r32 has home_id/away_id for each R32 fixture.
+    // r16_pairs = [[r32a, r32b], ...] — find the pair containing our team,
+    // then get the team from the partner R32 fixture (the other team in our R16 match).
+    const BR    = BRACKET || {};
+    const r32   = BR.r32       || {};
+    const r16p  = BR.r16_pairs || [];
+    let oppStr  = AVG_OPP.R16; // fallback
+
+    // Find which R32 fixture our team came from
+    let myR32Fid = null;
+    for (const [fidStr, fix] of Object.entries(r32)) {
+      if (fix.home_id === ts.team_id || fix.away_id === ts.team_id) {
+        myR32Fid = parseInt(fidStr, 10);
+        break;
+      }
+    }
+
+    if (myR32Fid !== null) {
+      // Find the R16 pair containing our R32 fixture
+      const pairIdx = r16p.findIndex(pair => pair[0] === myR32Fid || pair[1] === myR32Fid);
+      if (pairIdx >= 0) {
+        const pair      = r16p[pairIdx];
+        const partnerFid = String(pair[0] === myR32Fid ? pair[1] : pair[0]);
+        const partnerFix = r32[partnerFid];
+        if (partnerFix) {
+          // Identify the surviving team from the partner R32 (our actual R16 opponent)
+          const pHome = (TEAM_STATS||[]).find(t => t.team_id === partnerFix.home_id);
+          const pAway = (TEAM_STATS||[]).find(t => t.team_id === partnerFix.away_id);
+          // The opponent is whichever team is NOT eliminated
+          const opponent = (pHome && !pHome.is_eliminated) ? pHome
+                         : (pAway && !pAway.is_eliminated) ? pAway
+                         : null;
+          if (opponent) {
+            oppStr = tStr(opponent);
+          }
+        }
+      }
+    }
+    pWinR16 = wP(myStr, oppStr);
   }
-  if (stageRank <= 2) pWinQF  = wP(myStr, AVG_OPP.QF);
-  if (stageRank <= 3) pWinSF  = wP(myStr, AVG_OPP.SF);
-  if (stageRank <= 4) pWinF   = wP(myStr, AVG_OPP.F);
+
+  if (stageRank <= 3) pWinQF  = wP(myStr, AVG_OPP.QF);
+  if (stageRank <= 4) pWinSF  = wP(myStr, AVG_OPP.SF);
+  if (stageRank <= 5) pWinF   = wP(myStr, AVG_OPP.F);
 
   // Cumulative P(reach and WIN each future round) → earns 3pts
   // Starting from current position: P of the NEXT match is just pWin (they're already there).
