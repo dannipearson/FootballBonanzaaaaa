@@ -1101,7 +1101,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
     <h3>ℹ️ Latest Refresh — What's Included</h3>
     <div class="info-row">
       <span class="info-lbl">Generated</span>
-      <span class="info-val">28 June 2026 at 16:11</span>
+      <span class="info-val">28 June 2026 at 16:24</span>
     </div>
     <div class="info-row">
       <span class="info-lbl">Results included</span>
@@ -1764,7 +1764,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   </div>
 </div>
 
-<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 28 June 2026 at 16:11</div>
+<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 28 June 2026 at 16:24</div>
 
 <!-- ANNOUNCEMENT FLOATING BUTTON -->
 <button class="announce-fab" onclick="document.getElementById('announce-modal').classList.add('open'); markAnnouncementRead()" id="announce-fab">
@@ -1779,7 +1779,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   <div class="modal-inner">
     <button class="modal-close" onclick="document.getElementById('announce-modal').classList.remove('open')">✕</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:800;color:var(--gold);margin-bottom:12px">📢 Latest Announcement</h2>
-    <div class="announce-from">From Danni · 28 June 2026 at 16:11</div>
+    <div class="announce-from">From Danni · 28 June 2026 at 16:24</div>
     <div class="announce-body" id="announce-body" style="margin-top:16px">Round 3 is done...
 
 ...PLAYER TRANSFERS ARE OPEN!
@@ -1874,13 +1874,13 @@ function submitReport(method) {
   lines.push('');
   lines.push(msg);
   lines.push('');
-  lines.push('(Generated: 28 June 2026 at 16:11)');
+  lines.push('(Generated: 28 June 2026 at 16:24)');
   const bodyText = lines.join(String.fromCharCode(10));
   if (method === 'email') {
     const subject = 'WC2026 Leaderboard - Error Report';
     window.open('mailto:danielle.pearson@live.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText), '_blank');
   } else {
-    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 28 June 2026 at 16:11)';
+    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 28 June 2026 at 16:24)';
     window.open('https://wa.me/447909334688?text=' + encodeURIComponent(waText), '_blank');
   }
   // Close modal after short delay so user sees confirmation
@@ -5327,19 +5327,6 @@ function renderCeiling() {
   _initProjSelectors();
   const out = document.getElementById('sb-ceiling-output');
 
-  // ── DEBUG: log team data for diagnosis — remove once confirmed working ──
-  const _debugTeams = ['DR Congo','England','Argentina','France','Brazil'];
-  _debugTeams.forEach(name => {
-    const ts = TEAM_BY_NAME[name];
-    if (ts) {
-      const pts = _expectedTeamPts(ts);
-      console.log(`[TeamProj] ${name}: stage_reached=${ts.stage_reached} stageRank=${(STAGE_RANKS[ts.stage_reached]||0)} pot=${ts.pot} is_elim=${ts.is_eliminated} → expPts=${pts}`);
-    } else {
-      console.log(`[TeamProj] ${name}: NOT FOUND in TEAM_BY_NAME`);
-    }
-  });
-  // ── END DEBUG ──
-
   // Names from multi-select (defaulted to top 5 on init)
   const names = _projSelected.length > 0
     ? _projSelected
@@ -5579,10 +5566,7 @@ function renderCeiling() {
     const scoreSz = isMobile ? '1.25rem' : '1.6rem';
     const nameSz  = isMobile ? '.72rem' : '.82rem';
     const rnkSz   = isMobile ? '.55rem' : '.6rem';
-    // On mobile shorten name to first word always (saves width)
-    const dispName = isMobile
-      ? c.name.split(' ')[0]
-      : (c.name.length>18 ? c.name.split(' ')[0] : c.name);
+    const dispName = c.name;
     const sb_h = _scenarioActive ? (c.scenarioBonus||0) : 0;
     html += `<div class="proj-col-header" style="color:${c.color};padding:${hdrPad};
       border-top:3px solid ${c.color};background:${sb_h>0?c.color+'28':c.color+'12'}">
@@ -5723,7 +5707,7 @@ function renderCeiling() {
         const mb = _scenarioActive ? (c.scenarioBonus||0) : 0;
         return `<div style="width:${MOB_COL_W}px;min-width:${MOB_COL_W}px;flex-shrink:0;
           padding:3px 4px;text-align:center;background:${mb>0?c.color+'28':c.color+'14'};border-right:1px solid var(--border)">
-          <div style="font-size:.62rem;font-weight:700;color:${c.color};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.name.split(' ')[0]}</div>
+          <div style="font-size:.62rem;font-weight:700;color:${c.color};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.name}</div>
           <div style="font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:800;color:${c.color};line-height:1">${c.curr}</div>
           ${mb>0?`<div style="margin-top:3px;padding:2px 4px;border-radius:4px;background:rgba(46,204,113,.2);border:1px solid rgba(46,204,113,.5);text-align:center">
             <div style="font-size:.42rem;color:rgba(46,204,113,.9);font-weight:600;letter-spacing:.03em;text-transform:uppercase">Scores if correct</div>
