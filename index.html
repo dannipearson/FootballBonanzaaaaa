@@ -1101,7 +1101,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
     <h3>ℹ️ Latest Refresh — What's Included</h3>
     <div class="info-row">
       <span class="info-lbl">Generated</span>
-      <span class="info-val">28 June 2026 at 13:58</span>
+      <span class="info-val">28 June 2026 at 15:21</span>
     </div>
     <div class="info-row">
       <span class="info-lbl">Results included</span>
@@ -1583,6 +1583,68 @@ body:not(.has-bonus) .bonus-col { display:none; }
   <div class="an-mode-bar">
     <button class="an-mode-btn active" id="an-mode-h2h"  onclick="setAnMode('h2h',this)">🎯 Head-to-Head</button>
     <button class="an-mode-btn"        id="an-mode-sb"   onclick="setAnMode('sb',this)">📊 Scenario Builder</button>
+    <button id="sb-info-btn" onclick="document.getElementById('sb-info-modal').style.display='flex'"
+      title="How are projections calculated?"
+      style="display:none;width:22px;height:22px;border-radius:50%;border:1px solid rgba(100,160,220,.5);
+        background:rgba(100,160,220,.12);color:rgba(160,200,240,.9);font-size:.75rem;font-weight:700;
+        cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;padding:0;line-height:1">ⓘ</button>
+  </div>
+
+  <!-- ── Projection methodology modal ─────────────────────────────── -->
+  <div id="sb-info-modal" onclick="if(event.target===this)this.style.display='none'"
+    style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.65);
+      align-items:center;justify-content:center;padding:16px">
+    <div style="background:#0D1B2A;border:1px solid #2A3F5A;border-radius:14px;
+      max-width:540px;width:100%;max-height:85vh;overflow-y:auto;padding:22px 24px;position:relative">
+      <button onclick="document.getElementById('sb-info-modal').style.display='none'"
+        style="position:absolute;top:12px;right:14px;background:none;border:none;
+          color:var(--muted);font-size:1.1rem;cursor:pointer;line-height:1">✕</button>
+      <div style="font-size:1rem;font-weight:700;color:var(--white);margin-bottom:14px">ⓘ How projections are calculated</div>
+
+      <div style="font-size:.8rem;color:var(--muted);line-height:1.6">
+
+        <div style="color:rgba(100,200,255,.9);font-weight:700;margin-bottom:4px">⚽ Player projected points</div>
+        <ul style="margin:0 0 12px 16px;padding:0;list-style:disc">
+          <li>A player's scoring rate (goals, assists, POTM per game) is blended with a tournament average — so a zero-scorer still gets a small chance of future points, and someone on a hot streak doesn't project as if they'll score every game.</li>
+          <li>That blended rate is multiplied by expected games remaining, where each future round is weighted by the probability the team actually reaches it (based on pot, form, and bracket path).</li>
+          <li>Total projected points for a group of players has a portfolio discount applied — having 7 picks in the same games doesn't mean you get all their individual projections added up.</li>
+        </ul>
+
+        <div style="color:rgba(100,200,255,.9);font-weight:700;margin-bottom:4px">📊 Scoring % likelihood bar</div>
+        <ul style="margin:0 0 12px 16px;padding:0;list-style:disc">
+          <li>Shows the probability a player scores at least one more point — based on their blended per-game rate and expected games remaining.</li>
+          <li>Capped at 97% even for prolific scorers, and adjusted downward for teams unlikely to progress deep into the tournament.</li>
+        </ul>
+
+        <div style="color:rgba(100,200,255,.9);font-weight:700;margin-bottom:4px">🏟️ Team winning %</div>
+        <ul style="margin:0 0 12px 16px;padding:0;list-style:disc">
+          <li>Based on pot seeding (Pot 1 teams start higher) adjusted by group stage form — a Pot 3 team performing like a Pot 1 gets a boost.</li>
+          <li>Bracket path matters: who a team is likely to face in each round affects how far they're expected to go.</li>
+        </ul>
+
+        <div style="color:rgba(100,200,255,.9);font-weight:700;margin-bottom:4px">🏅 Quarter-finalist likelihood</div>
+        <ul style="margin:0 0 12px 16px;padding:0;list-style:disc">
+          <li>Uses the actual bracket draw — team's path through R32 and R16 — with opponent strength estimated from pot + form.</li>
+          <li>A Pot 1 team in an easier half of the draw projects higher than the same team in a tougher half.</li>
+        </ul>
+
+        <div style="color:rgba(100,200,255,.9);font-weight:700;margin-bottom:4px">🎰 Potluck &amp; ❓ Questions likelihood</div>
+        <ul style="margin:0 0 12px 16px;padding:0;list-style:disc">
+          <li>Compares each pick against the current tournament truth (leading team for goals, cards, etc.) — on track, possible, or currently wrong.</li>
+          <li>Eliminated teams can still win Goals/Cards categories if their total is currently the highest — so those picks aren't written off.</li>
+        </ul>
+
+        <div style="color:rgba(100,200,255,.9);font-weight:700;margin-bottom:4px">⚠️ Naughty Step</div>
+        <ul style="margin:0 0 12px 16px;padding:0;list-style:disc">
+          <li>Projects based on each player's yellow/red card rate so far, multiplied by expected games remaining for their team.</li>
+          <li>All-carded bonus probability is the joint chance all 3 naughty players get at least one card.</li>
+        </ul>
+
+        <div style="margin-top:10px;font-size:.72rem;color:var(--muted);font-style:italic">
+          All projections are estimates only — they reflect probabilities, not guarantees. The actual tournament is gloriously unpredictable.
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ── HEAD TO HEAD ──────────────────────────────────────────── -->
@@ -1702,7 +1764,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   </div>
 </div>
 
-<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 28 June 2026 at 13:58</div>
+<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 28 June 2026 at 15:21</div>
 
 <!-- ANNOUNCEMENT FLOATING BUTTON -->
 <button class="announce-fab" onclick="document.getElementById('announce-modal').classList.add('open'); markAnnouncementRead()" id="announce-fab">
@@ -1717,12 +1779,12 @@ body:not(.has-bonus) .bonus-col { display:none; }
   <div class="modal-inner">
     <button class="modal-close" onclick="document.getElementById('announce-modal').classList.remove('open')">✕</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:800;color:var(--gold);margin-bottom:12px">📢 Latest Announcement</h2>
-    <div class="announce-from">From Danni · 28 June 2026 at 13:58</div>
+    <div class="announce-from">From Danni · 28 June 2026 at 15:21</div>
     <div class="announce-body" id="announce-body" style="margin-top:16px">Round 3 is done...
 
 ...PLAYER TRANSFERS ARE OPEN!
 
-Don't forget to submit your two new players to get some new points for the L16 games!
+Don't forget to submit your two new players to get some new points for the L16 games onwards!
 
 😊⚽</div>
     
@@ -1746,7 +1808,7 @@ const UPCOMING_DATA    = [{"home": "South Africa", "away": "Canada", "home_id": 
 const BRACKET          = {"r32": {"537417": {"match": "M73", "home_slot": "2A", "away_slot": "2B", "home_label": "T_RSA", "away_label": "T_Can", "home_id": "T_RSA", "away_id": "T_Can"}, "537423": {"match": "M76", "home_slot": "1C", "away_slot": "2F", "home_label": "T_Bra", "away_label": "T_Jap", "home_id": "T_Bra", "away_id": "T_Jap"}, "537415": {"match": "M74", "home_slot": "1E", "away_slot": "3-ABCDF", "home_label": "T_Ger", "away_label": "3rd place A/B/C/D/F", "home_id": "T_Ger", "away_id": "T_Par"}, "537418": {"match": "M75", "home_slot": "1F", "away_slot": "2C", "home_label": "T_Net", "away_label": "T_Mor", "home_id": "T_Net", "away_id": "T_Mor"}, "537424": {"match": "M78", "home_slot": "2E", "away_slot": "2I", "home_label": "T_Ivo", "away_label": "T_Nor", "home_id": "T_Ivo", "away_id": "T_Nor"}, "537416": {"match": "M77", "home_slot": "1I", "away_slot": "3-CDFGH", "home_label": "T_Fra", "away_label": "3rd place C/D/F/G/H", "home_id": "T_Fra", "away_id": "T_Swe"}, "537425": {"match": "M79", "home_slot": "1A", "away_slot": "3-CEFHI", "home_label": "T_Mex", "away_label": "3rd place C/E/F/H/I", "home_id": "T_Mex", "away_id": "T_Ecu"}, "537426": {"match": "M80", "home_slot": "1L", "away_slot": "3-EHIJK", "home_label": "T_Eng", "away_label": "3rd place E/H/I/J/K", "home_id": "T_Eng", "away_id": "T_DR"}, "537422": {"match": "M82", "home_slot": "1G", "away_slot": "3-AEHIJ", "home_label": "T_Bel", "away_label": "3rd place A/E/H/I/J", "home_id": "T_Bel", "away_id": "T_Sen"}, "537421": {"match": "M81", "home_slot": "1D", "away_slot": "3-BEFIJ", "home_label": "T_Uni", "away_label": "3rd place B/E/F/I/J", "home_id": "T_Uni", "away_id": "T_Bos"}, "537420": {"match": "M83", "home_slot": "2K", "away_slot": "2L", "home_label": "T_Por", "away_label": "T_Cro", "home_id": "T_Spa", "away_id": "T_Aut"}, "537419": {"match": "M84", "home_slot": "1H", "away_slot": "2J", "home_label": "T_Spa", "away_label": "T_Aut", "home_id": "T_Por", "away_id": "T_Cro"}, "537429": {"match": "M85", "home_slot": "1B", "away_slot": "3-EFGIJ", "home_label": "T_Swi", "away_label": "3rd place E/F/G/I/J", "home_id": "T_Swi", "away_id": "T_Alg"}, "537428": {"match": "M86", "home_slot": "1J", "away_slot": "2H", "home_label": "T_Arg", "away_label": "T_Cap", "home_id": "T_Aus", "away_id": "T_Egy"}, "537427": {"match": "M87", "home_slot": "1K", "away_slot": "3-DEIJL", "home_label": "T_Col", "away_label": "3rd place D/E/I/J/L", "home_id": "T_Arg", "away_id": "T_Cap"}, "537430": {"match": "M88", "home_slot": "2D", "away_slot": "2G", "home_label": "T_Aus", "away_label": "T_Egy", "home_id": "T_Col", "away_id": "T_Gha"}}, "r16": {"537376": {"match": "M89", "home_slot": "W-M73", "away_slot": "W-M74", "home_label": "Winner M73", "away_label": "Winner M74", "home_r32_fid": 537417, "away_r32_fid": 537415}, "537375": {"match": "M90", "home_slot": "W-M75", "away_slot": "W-M76", "home_label": "Winner M75", "away_label": "Winner M76", "home_r32_fid": 537418, "away_r32_fid": 537423}, "537377": {"match": "M91", "home_slot": "W-M77", "away_slot": "W-M78", "home_label": "Winner M77", "away_label": "Winner M78", "home_r32_fid": 537416, "away_r32_fid": 537424}, "537378": {"match": "M92", "home_slot": "W-M79", "away_slot": "W-M80", "home_label": "Winner M79", "away_label": "Winner M80", "home_r32_fid": 537425, "away_r32_fid": 537426}, "537379": {"match": "M93", "home_slot": "W-M81", "away_slot": "W-M82", "home_label": "Winner M81", "away_label": "Winner M82", "home_r32_fid": 537421, "away_r32_fid": 537422}, "537380": {"match": "M94", "home_slot": "W-M83", "away_slot": "W-M84", "home_label": "Winner M83", "away_label": "Winner M84", "home_r32_fid": 537420, "away_r32_fid": 537419}, "537381": {"match": "M95", "home_slot": "W-M85", "away_slot": "W-M86", "home_label": "Winner M85", "away_label": "Winner M86", "home_r32_fid": 537429, "away_r32_fid": 537428}, "537382": {"match": "M96", "home_slot": "W-M87", "away_slot": "W-M88", "home_label": "Winner M87", "away_label": "Winner M88", "home_r32_fid": 537427, "away_r32_fid": 537430}}, "qf": {"537383": {"match": "M97", "home_slot": "W-M89", "away_slot": "W-M90", "home_label": "Winner M89", "away_label": "Winner M90", "home_r16_fid": 537376, "away_r16_fid": 537375}, "537384": {"match": "M98", "home_slot": "W-M91", "away_slot": "W-M92", "home_label": "Winner M91", "away_label": "Winner M92", "home_r16_fid": 537377, "away_r16_fid": 537378}, "537385": {"match": "M99", "home_slot": "W-M93", "away_slot": "W-M94", "home_label": "Winner M93", "away_label": "Winner M94", "home_r16_fid": 537379, "away_r16_fid": 537380}, "537386": {"match": "M100", "home_slot": "W-M95", "away_slot": "W-M96", "home_label": "Winner M95", "away_label": "Winner M96", "home_r16_fid": 537381, "away_r16_fid": 537382}}, "sf": {"537387": {"match": "M101", "home_slot": "W-M97", "away_slot": "W-M98", "home_label": "Winner M97", "away_label": "Winner M98", "home_qf_fid": 537383, "away_qf_fid": 537384}, "537388": {"match": "M102", "home_slot": "W-M99", "away_slot": "W-M100", "home_label": "Winner M99", "away_label": "Winner M100", "home_qf_fid": 537385, "away_qf_fid": 537386}}, "f": {"537390": {"match": "M104", "home_slot": "W-M101", "away_slot": "W-M102", "home_label": "Winner M101", "away_label": "Winner M102"}}, "3p": {"537389": {"match": "M103", "home_slot": "L-M101", "away_slot": "L-M102", "home_label": "Loser M101", "away_label": "Loser M102"}}, "r32_to_r16": {"537417": "537376", "537415": "537376", "537418": "537375", "537423": "537375", "537416": "537377", "537424": "537377", "537425": "537378", "537426": "537378", "537421": "537379", "537422": "537379", "537420": "537380", "537419": "537380", "537429": "537381", "537428": "537381", "537427": "537382", "537430": "537382"}, "r16_to_qf": {"537376": "537383", "537375": "537383", "537377": "537384", "537378": "537384", "537379": "537385", "537380": "537385", "537381": "537386", "537382": "537386"}, "qf_to_sf": {"537383": "537387", "537384": "537387", "537385": "537388", "537386": "537388"}, "r16_pairs": [[537417, 537415], [537418, 537423], [537416, 537424], [537425, 537426], [537421, 537422], [537420, 537419], [537429, 537428], [537427, 537430]], "qf_pairs": [[0, 1], [2, 3], [4, 5], [6, 7]], "group_teams": {"A": [{"team_id": "T_Cze", "pot": 3}, {"team_id": "T_Mex", "pot": 1}, {"team_id": "T_RSA", "pot": 3}, {"team_id": "T_Kor", "pot": 3}], "B": [{"team_id": "T_Bos", "pot": 3}, {"team_id": "T_Can", "pot": 2}, {"team_id": "T_Qat", "pot": 4}, {"team_id": "T_Swi", "pot": 2}], "C": [{"team_id": "T_Bra", "pot": 1}, {"team_id": "T_Hai", "pot": 4}, {"team_id": "T_Mor", "pot": 2}, {"team_id": "T_Sco", "pot": 3}], "D": [{"team_id": "T_Aus", "pot": 2}, {"team_id": "T_Par", "pot": 3}, {"team_id": "T_Tur", "pot": 3}, {"team_id": "T_Uni", "pot": 2}], "E": [{"team_id": "T_Cur", "pot": 4}, {"team_id": "T_Ecu", "pot": 2}, {"team_id": "T_Ger", "pot": 1}, {"team_id": "T_Ivo", "pot": 3}], "F": [{"team_id": "T_Jap", "pot": 2}, {"team_id": "T_Net", "pot": 1}, {"team_id": "T_Swe", "pot": 3}, {"team_id": "T_Tun", "pot": 4}], "G": [{"team_id": "T_Bel", "pot": 1}, {"team_id": "T_Egy", "pot": 2}, {"team_id": "T_Irn", "pot": 3}, {"team_id": "T_New", "pot": 4}], "H": [{"team_id": "T_Cap", "pot": 4}, {"team_id": "T_Sau", "pot": 4}, {"team_id": "T_Spa", "pot": 1}, {"team_id": "T_Uru", "pot": 1}], "I": [{"team_id": "T_Fra", "pot": 1}, {"team_id": "T_Irq", "pot": 4}, {"team_id": "T_Nor", "pot": 2}, {"team_id": "T_Sen", "pot": 2}], "J": [{"team_id": "T_Alg", "pot": 2}, {"team_id": "T_Arg", "pot": 1}, {"team_id": "T_Aut", "pot": 3}, {"team_id": "T_Jor", "pot": 4}], "K": [{"team_id": "T_Col", "pot": 2}, {"team_id": "T_DR", "pot": 4}, {"team_id": "T_Por", "pot": 1}, {"team_id": "T_Uzb", "pot": 4}], "L": [{"team_id": "T_Cro", "pot": 1}, {"team_id": "T_Eng", "pot": 1}, {"team_id": "T_Gha", "pot": 3}, {"team_id": "T_Pan", "pot": 4}]}};
 const TOTAL_PLAYERS    = 112;
 const LAST_REFRESH_LABEL = "28 Jun, 11:42";
-const ANNOUNCEMENT     = "Round 3 is done...\n\n...PLAYER TRANSFERS ARE OPEN!\n\nDon't forget to submit your two new players to get some new points for the L16 games!\n\n\ud83d\ude0a\u26bd";
+const ANNOUNCEMENT     = "Round 3 is done...\n\n...PLAYER TRANSFERS ARE OPEN!\n\nDon't forget to submit your two new players to get some new points for the L16 games onwards!\n\n\ud83d\ude0a\u26bd";
 const TRUTHS_DATA      = [{"question_id": "Q_POT1_GOALS", "correct_answer": "France", "correct_team_id": "T_Fra", "correct_player_id": "nan", "is_confirmed": true}, {"question_id": "Q_POT2_GOALS", "correct_answer": "Canada", "correct_team_id": "T_Can", "correct_player_id": "nan", "is_confirmed": true}, {"question_id": "Q_POT3_GOALS", "correct_answer": "Sweden", "correct_team_id": "T_Swe", "correct_player_id": "nan", "is_confirmed": true}, {"question_id": "Q_POT4_GOALS", "correct_answer": "DR Congo", "correct_team_id": "T_DR", "correct_player_id": "nan", "is_confirmed": true}, {"question_id": "Q_POT1_CARDS", "correct_answer": "Uruguay", "correct_team_id": "T_Uru", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_POT2_CARDS", "correct_answer": "Egypt", "correct_team_id": "T_Egy", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_POT3_CARDS", "correct_answer": "Paraguay", "correct_team_id": "T_Par", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_POT4_CARDS", "correct_answer": "Haiti", "correct_team_id": "T_Hai", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_POT1_BEST", "correct_answer": "France", "correct_team_id": "T_Fra", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_POT2_BEST", "correct_answer": "Switzerland", "correct_team_id": "T_Swi", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_POT3_BEST", "correct_answer": "Ivory Coast", "correct_team_id": "T_Ivo", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_POT4_BEST", "correct_answer": "DR Congo", "correct_team_id": "T_DR", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_POT1_WORST", "correct_answer": "Uruguay", "correct_team_id": "T_Uru", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_POT2_WORST", "correct_answer": "Senegal", "correct_team_id": "T_Sen", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_POT3_WORST", "correct_answer": "Czech Republic", "correct_team_id": "T_Cze", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_POT4_WORST", "correct_answer": "Iraq", "correct_team_id": "T_Irq", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_WINNER", "correct_answer": "nan", "correct_team_id": "nan", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_WOODEN_SPOON", "correct_answer": "Iraq", "correct_team_id": "T_Irq", "correct_player_id": "nan", "is_confirmed": true}, {"question_id": "Q_GOLDEN_BOOT", "correct_answer": "Lionel Messi", "correct_team_id": "nan", "correct_player_id": "P_T_Arg_10", "is_confirmed": false}, {"question_id": "Q_GOLDEN_BALL", "correct_answer": "nan", "correct_team_id": "nan", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_GOLDEN_GLOVE", "correct_answer": "nan", "correct_team_id": "nan", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_HIGHEST_SCORING_TEAM", "correct_answer": "Germany", "correct_team_id": "T_Ger", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_TOTAL_RED_CARDS", "correct_answer": "10", "correct_team_id": "nan", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_TOTAL_OWN_GOALS", "correct_answer": "12", "correct_team_id": "nan", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_ENGLAND_PROGRESS", "correct_answer": "Group Stage", "correct_team_id": "nan", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "Q_SCOTLAND_PROGRESS", "correct_answer": "Group Stage", "correct_team_id": "nan", "correct_player_id": "nan", "is_confirmed": true}, {"question_id": "QF_TEAM", "correct_answer": "nan", "correct_team_id": "nan", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "QF_TEAM", "correct_answer": "nan", "correct_team_id": "nan", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "QF_TEAM", "correct_answer": "nan", "correct_team_id": "nan", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "QF_TEAM", "correct_answer": "nan", "correct_team_id": "nan", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "QF_TEAM", "correct_answer": "nan", "correct_team_id": "nan", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "QF_TEAM", "correct_answer": "nan", "correct_team_id": "nan", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "QF_TEAM", "correct_answer": "nan", "correct_team_id": "nan", "correct_player_id": "nan", "is_confirmed": false}, {"question_id": "QF_TEAM", "correct_answer": "nan", "correct_team_id": "nan", "correct_player_id": "nan", "is_confirmed": false}];
 const GLOVE_DATA       = [{"name": "Mike Maignan", "team": "France", "cs": 1, "ga": 2, "picked": 22}, {"name": "Unai Sim\u00f3n", "team": "Spain", "cs": 3, "ga": 0, "picked": 17}, {"name": "Emiliano Mart\u00ednez", "team": "Argentina", "cs": 2, "ga": 1, "picked": 16}, {"name": "David Raya", "team": "Spain", "cs": 3, "ga": 0, "picked": 14}, {"name": "Alisson", "team": "Brazil", "cs": 2, "ga": 1, "picked": 13}, {"name": "Jordan Pickford", "team": "England", "cs": 2, "ga": 2, "picked": 13}, {"name": "Diogo Costa", "team": "Portugal", "cs": 2, "ga": 1, "picked": 9}, {"name": "Thibaut Courtois", "team": "Belgium", "cs": 1, "ga": 2, "picked": 3}, {"name": "Manuel Neuer", "team": "Germany", "cs": 0, "ga": 4, "picked": 3}, {"name": "Bart Verbruggen", "team": "Netherlands", "cs": 0, "ga": 4, "picked": 1}, {"name": "Carlos Acevedo", "team": "Mexico", "cs": 3, "ga": 0, "picked": 0}, {"name": "Guillermo Ochoa", "team": "Mexico", "cs": 3, "ga": 0, "picked": 0}, {"name": "Joan Garcia", "team": "Spain", "cs": 3, "ga": 0, "picked": 0}, {"name": "Ra\u00fal Rangel", "team": "Mexico", "cs": 3, "ga": 0, "picked": 0}, {"name": "Camilo Vargas", "team": "Colombia", "cs": 2, "ga": 1, "picked": 0}, {"name": "David Ospina", "team": "Colombia", "cs": 2, "ga": 1, "picked": 0}, {"name": "Ederson Moraes", "team": "Brazil", "cs": 2, "ga": 1, "picked": 0}, {"name": "Ger\u00f3nimo Rulli", "team": "Argentina", "cs": 2, "ga": 1, "picked": 0}, {"name": "Jos\u00e9 S\u00e1", "team": "Portugal", "cs": 2, "ga": 1, "picked": 0}, {"name": "Juan Musso", "team": "Argentina", "cs": 2, "ga": 1, "picked": 0}, {"name": "Rui Silva", "team": "Portugal", "cs": 2, "ga": 1, "picked": 0}, {"name": "Weverton", "team": "Brazil", "cs": 2, "ga": 1, "picked": 0}, {"name": "\u00c1lvaro Montero", "team": "Colombia", "cs": 2, "ga": 1, "picked": 0}, {"name": "Alban Lafont", "team": "Ivory Coast", "cs": 2, "ga": 2, "picked": 0}, {"name": "Benjamin Asare", "team": "Ghana", "cs": 2, "ga": 2, "picked": 0}, {"name": "CJ dos Santos", "team": "Cape Verde", "cs": 2, "ga": 2, "picked": 0}, {"name": "Dean Henderson", "team": "England", "cs": 2, "ga": 2, "picked": 0}, {"name": "James Trafford", "team": "England", "cs": 2, "ga": 2, "picked": 0}, {"name": "Joseph Anang", "team": "Ghana", "cs": 2, "ga": 2, "picked": 0}, {"name": "Lawrence Ati-Zigi", "team": "Ghana", "cs": 2, "ga": 2, "picked": 0}, {"name": "Mathew Ryan", "team": "Australia", "cs": 2, "ga": 2, "picked": 0}, {"name": "Mohamed Kon\u00e9", "team": "Ivory Coast", "cs": 2, "ga": 2, "picked": 0}, {"name": "M\u00e1rcio Rosa", "team": "Cape Verde", "cs": 2, "ga": 2, "picked": 0}, {"name": "Patrick Beach", "team": "Australia", "cs": 2, "ga": 2, "picked": 0}, {"name": "Paul Izzo", "team": "Australia", "cs": 2, "ga": 2, "picked": 0}, {"name": "Vozinha", "team": "Cape Verde", "cs": 2, "ga": 2, "picked": 0}, {"name": "Yahia Fofana", "team": "Ivory Coast", "cs": 2, "ga": 2, "picked": 0}, {"name": "Gast\u00f3n Olveira", "team": "Paraguay", "cs": 2, "ga": 4, "picked": 0}, {"name": "Gatito Fern\u00e1ndez", "team": "Paraguay", "cs": 2, "ga": 4, "picked": 0}, {"name": "Orlando Gill", "team": "Paraguay", "cs": 2, "ga": 4, "picked": 0}, {"name": "Brice Samba", "team": "France", "cs": 1, "ga": 2, "picked": 0}, {"name": "Gonzalo Valle", "team": "Ecuador", "cs": 1, "ga": 2, "picked": 0}, {"name": "Hern\u00e1n Gal\u00edndez", "team": "Ecuador", "cs": 1, "ga": 2, "picked": 0}, {"name": "Mike Penders", "team": "Belgium", "cs": 1, "ga": 2, "picked": 0}, {"name": "Mois\u00e9s Ram\u00edrez", "team": "Ecuador", "cs": 1, "ga": 2, "picked": 0}, {"name": "Robin Risser", "team": "France", "cs": 1, "ga": 2, "picked": 0}, {"name": "Senne Lammens", "team": "Belgium", "cs": 1, "ga": 2, "picked": 0}, {"name": "Ahmed Reda Tagnaouti", "team": "Morocco", "cs": 1, "ga": 3, "picked": 0}, {"name": "Alireza Beiranvand", "team": "Iran", "cs": 1, "ga": 3, "picked": 0}, {"name": "Dayne St. Clair", "team": "Canada", "cs": 1, "ga": 3, "picked": 0}, {"name": "Hossein Hosseini", "team": "Iran", "cs": 1, "ga": 3, "picked": 0}, {"name": "Keisuke \u014csako", "team": "Japan", "cs": 1, "ga": 3, "picked": 0}, {"name": "Maxime Cr\u00e9peau", "team": "Canada", "cs": 1, "ga": 3, "picked": 0}, {"name": "Munir Mohamedi", "team": "Morocco", "cs": 1, "ga": 3, "picked": 0}, {"name": "Owen Goodman", "team": "Canada", "cs": 1, "ga": 3, "picked": 0}, {"name": "Payam Niazmand", "team": "Iran", "cs": 1, "ga": 3, "picked": 0}, {"name": "Ricardo Goss", "team": "South Africa", "cs": 1, "ga": 3, "picked": 0}, {"name": "Ronwen Williams", "team": "South Africa", "cs": 1, "ga": 3, "picked": 0}, {"name": "Sipho Chaine", "team": "South Africa", "cs": 1, "ga": 3, "picked": 0}, {"name": "Tomoki Hayakawa", "team": "Japan", "cs": 1, "ga": 3, "picked": 0}, {"name": "Yassine Bounou", "team": "Morocco", "cs": 1, "ga": 3, "picked": 0}, {"name": "Zion Suzuki", "team": "Japan", "cs": 1, "ga": 3, "picked": 0}, {"name": "Angus Gunn", "team": "Scotland", "cs": 1, "ga": 4, "picked": 0}, {"name": "Chris Brady", "team": "United States", "cs": 1, "ga": 4, "picked": 0}, {"name": "Craig Gordon", "team": "Scotland", "cs": 1, "ga": 4, "picked": 0}, {"name": "Liam Kelly", "team": "Scotland", "cs": 1, "ga": 4, "picked": 0}, {"name": "Matt Freese", "team": "United States", "cs": 1, "ga": 4, "picked": 0}, {"name": "Matt Turner", "team": "United States", "cs": 1, "ga": 4, "picked": 0}, {"name": "Ahmed Al-Kassar", "team": "Saudi Arabia", "cs": 1, "ga": 5, "picked": 0}, {"name": "Dominik Kotarski", "team": "Croatia", "cs": 1, "ga": 5, "picked": 0}, {"name": "Dominik Livakovi\u0107", "team": "Croatia", "cs": 1, "ga": 5, "picked": 0}, {"name": "Ivor Pandur", "team": "Croatia", "cs": 1, "ga": 5, "picked": 0}, {"name": "Mohammed Al-Owais", "team": "Saudi Arabia", "cs": 1, "ga": 5, "picked": 0}, {"name": "Nawaf Al-Aqidi", "team": "Saudi Arabia", "cs": 1, "ga": 5, "picked": 0}, {"name": "Mory Diaw", "team": "Senegal", "cs": 1, "ga": 6, "picked": 0}, {"name": "Yehvann Diouf", "team": "Senegal", "cs": 1, "ga": 6, "picked": 0}, {"name": "\u00c9douard Mendy", "team": "Senegal", "cs": 1, "ga": 6, "picked": 0}, {"name": "Eloy Room", "team": "Cura\u00e7ao", "cs": 1, "ga": 9, "picked": 0}, {"name": "Trevor Doornbusch", "team": "Cura\u00e7ao", "cs": 1, "ga": 9, "picked": 0}, {"name": "Tyrick Bodak", "team": "Cura\u00e7ao", "cs": 1, "ga": 9, "picked": 0}, {"name": "El Mahdy Soliman", "team": "Egypt", "cs": 0, "ga": 3, "picked": 0}, {"name": "Gregor Kobel", "team": "Switzerland", "cs": 0, "ga": 3, "picked": 0}, {"name": "Jo Hyeon-woo", "team": "South Korea", "cs": 0, "ga": 3, "picked": 0}, {"name": "Kim Seung-gyu", "team": "South Korea", "cs": 0, "ga": 3, "picked": 0}, {"name": "Lionel Mpasi", "team": "DR Congo", "cs": 0, "ga": 3, "picked": 0}, {"name": "Marvin Keller", "team": "Switzerland", "cs": 0, "ga": 3, "picked": 0}, {"name": "Matthieu Epolo", "team": "DR Congo", "cs": 0, "ga": 3, "picked": 0}, {"name": "Mohamed Alaa", "team": "Egypt", "cs": 0, "ga": 3, "picked": 0}, {"name": "Mohamed El Shenawy", "team": "Egypt", "cs": 0, "ga": 3, "picked": 0}, {"name": "Mostafa Shobeir", "team": "Egypt", "cs": 0, "ga": 3, "picked": 0}, {"name": "Song Bum-keun", "team": "South Korea", "cs": 0, "ga": 3, "picked": 0}, {"name": "Timothy Fayulu", "team": "DR Congo", "cs": 0, "ga": 3, "picked": 0}, {"name": "Yvon Mvogo", "team": "Switzerland", "cs": 0, "ga": 3, "picked": 0}, {"name": "Alexander N\u00fcbel", "team": "Germany", "cs": 0, "ga": 4, "picked": 0}, {"name": "C\u00e9sar Samudio", "team": "Panama", "cs": 0, "ga": 4, "picked": 0}, {"name": "Fernando Muslera", "team": "Uruguay", "cs": 0, "ga": 4, "picked": 0}, {"name": "Luis Mej\u00eda", "team": "Panama", "cs": 0, "ga": 4, "picked": 0}, {"name": "Mark Flekken", "team": "Netherlands", "cs": 0, "ga": 4, "picked": 0}, {"name": "Oliver Baumann", "team": "Germany", "cs": 0, "ga": 4, "picked": 0}, {"name": "Orlando Mosquera", "team": "Panama", "cs": 0, "ga": 4, "picked": 0}, {"name": "Robin Roefs", "team": "Netherlands", "cs": 0, "ga": 4, "picked": 0}, {"name": "Santiago Mele", "team": "Uruguay", "cs": 0, "ga": 4, "picked": 0}, {"name": "Sergio Rochet", "team": "Uruguay", "cs": 0, "ga": 4, "picked": 0}, {"name": "Altay Bay\u0131nd\u0131r", "team": "Turkey", "cs": 0, "ga": 5, "picked": 0}, {"name": "Mert G\u00fcnok", "team": "Turkey", "cs": 0, "ga": 5, "picked": 0}, {"name": "U\u011furcan \u00c7ak\u0131r", "team": "Turkey", "cs": 0, "ga": 5, "picked": 0}, {"name": "Alexander Schlager", "team": "Austria", "cs": 0, "ga": 6, "picked": 0}, {"name": "Florian Wiegele", "team": "Austria", "cs": 0, "ga": 6, "picked": 0}, {"name": "Jind\u0159ich Stan\u011bk", "team": "Czech Republic", "cs": 0, "ga": 6, "picked": 0}, {"name": "Luk\u00e1\u0161 Horn\u00ed\u010dek", "team": "Czech Republic", "cs": 0, "ga": 6, "picked": 0}, {"name": "Martin Zlomisli\u0107", "team": "Bosnia-Herzegovina", "cs": 0, "ga": 6, "picked": 0}, {"name": "Mat\u011bj Kov\u00e1\u0159", "team": "Czech Republic", "cs": 0, "ga": 6, "picked": 0}, {"name": "Mladen Jurkas", "team": "Bosnia-Herzegovina", "cs": 0, "ga": 6, "picked": 0}, {"name": "Nikola Vasilj", "team": "Bosnia-Herzegovina", "cs": 0, "ga": 6, "picked": 0}, {"name": "Patrick Pentz", "team": "Austria", "cs": 0, "ga": 6, "picked": 0}, {"name": "Egil Selvik", "team": "Norway", "cs": 0, "ga": 7, "picked": 0}, {"name": "Jacob Widell Zetterstr\u00f6m", "team": "Sweden", "cs": 0, "ga": 7, "picked": 0}, {"name": "Kristoffer Nordfeldt", "team": "Sweden", "cs": 0, "ga": 7, "picked": 0}, {"name": "Luca Zidane", "team": "Algeria", "cs": 0, "ga": 7, "picked": 0}, {"name": "Melvin Mastil", "team": "Algeria", "cs": 0, "ga": 7, "picked": 0}, {"name": "Oussama Benbot", "team": "Algeria", "cs": 0, "ga": 7, "picked": 0}, {"name": "Sander Tangvik", "team": "Norway", "cs": 0, "ga": 7, "picked": 0}, {"name": "Viktor Johansson", "team": "Sweden", "cs": 0, "ga": 7, "picked": 0}, {"name": "\u00d8rjan Nyland", "team": "Norway", "cs": 0, "ga": 7, "picked": 0}, {"name": "Abdallah Al-Fakhouri", "team": "Jordan", "cs": 0, "ga": 8, "picked": 0}, {"name": "Alexandre Pierre", "team": "Haiti", "cs": 0, "ga": 8, "picked": 0}, {"name": "Johny Placide", "team": "Haiti", "cs": 0, "ga": 8, "picked": 0}, {"name": "Josu\u00e9 Duverger", "team": "Haiti", "cs": 0, "ga": 8, "picked": 0}, {"name": "Nour Bani Attiah", "team": "Jordan", "cs": 0, "ga": 8, "picked": 0}, {"name": "Yazeed Abulaila", "team": "Jordan", "cs": 0, "ga": 8, "picked": 0}, {"name": "Alex Paulsen", "team": "New Zealand", "cs": 0, "ga": 10, "picked": 0}, {"name": "Mahmud Abunada", "team": "Qatar", "cs": 0, "ga": 10, "picked": 0}, {"name": "Max Crocombe", "team": "New Zealand", "cs": 0, "ga": 10, "picked": 0}, {"name": "Meshaal Barsham", "team": "Qatar", "cs": 0, "ga": 10, "picked": 0}, {"name": "Michael Woud", "team": "New Zealand", "cs": 0, "ga": 10, "picked": 0}, {"name": "Salah Zakaria", "team": "Qatar", "cs": 0, "ga": 10, "picked": 0}, {"name": "Abduvohid Nematov", "team": "Uzbekistan", "cs": 0, "ga": 11, "picked": 0}, {"name": "Botirali Ergashev", "team": "Uzbekistan", "cs": 0, "ga": 11, "picked": 0}, {"name": "Utkir Yusupov", "team": "Uzbekistan", "cs": 0, "ga": 11, "picked": 0}, {"name": "Ahmed Basil", "team": "Iraq", "cs": 0, "ga": 12, "picked": 0}, {"name": "Aymen Dahmen", "team": "Tunisia", "cs": 0, "ga": 12, "picked": 0}, {"name": "Fahad Talib", "team": "Iraq", "cs": 0, "ga": 12, "picked": 0}, {"name": "Jalal Hassan", "team": "Iraq", "cs": 0, "ga": 12, "picked": 0}, {"name": "Mouhib Chamakh", "team": "Tunisia", "cs": 0, "ga": 12, "picked": 0}, {"name": "Sabri Ben Hessen", "team": "Tunisia", "cs": 0, "ga": 12, "picked": 0}];
 
@@ -1812,13 +1874,13 @@ function submitReport(method) {
   lines.push('');
   lines.push(msg);
   lines.push('');
-  lines.push('(Generated: 28 June 2026 at 13:58)');
+  lines.push('(Generated: 28 June 2026 at 15:21)');
   const bodyText = lines.join(String.fromCharCode(10));
   if (method === 'email') {
     const subject = 'WC2026 Leaderboard - Error Report';
     window.open('mailto:danielle.pearson@live.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText), '_blank');
   } else {
-    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 28 June 2026 at 13:58)';
+    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 28 June 2026 at 15:21)';
     window.open('https://wa.me/447909334688?text=' + encodeURIComponent(waText), '_blank');
   }
   // Close modal after short delay so user sees confirmation
@@ -3819,6 +3881,8 @@ function setAnMode(mode, btn) {
   btn.classList.add('active');
   document.getElementById('an-h2h-view').style.display = mode === 'h2h' ? '' : 'none';
   document.getElementById('an-sb-view').style.display  = mode === 'sb'  ? '' : 'none';
+  const infoBtn = document.getElementById('sb-info-btn');
+  if (infoBtn) infoBtn.style.display = mode === 'sb' ? 'flex' : 'none';
   if (mode === 'h2h') renderComparison();
   if (mode === 'sb')  renderCeiling();
 }
@@ -3874,10 +3938,25 @@ function expectedPlayerPoints(ps) {
   const potm    = ps.potm    || 0;
   const played  = Math.max(team ? (team.played || 1) : 1, 1);
 
-  // Per-game rates from current form
-  const gpg  = goals   / played;
-  const apg  = assists / played;
-  const mpg  = potm    / played; // POTM per game
+  // Per-game rates from current form — with floor + regression-to-mean
+  // Floor: even a 0-goal player has some chance of scoring; regression: a 3-goal
+  // player won't necessarily keep that rate up. We blend observed rate with a
+  // position-aware prior and clamp to avoid extremes.
+  // Prior rates (league average for a picked player at this tournament):
+  const PRIOR_GPG = 0.18;  // ~1 goal per 5-6 games played
+  const PRIOR_APG = 0.12;
+  const PRIOR_MPG = 0.10;
+  // Bayesian blend weight = played / (played + prior_weight).
+  // Prior weight of 3 means after 3 games the player is 50% observed / 50% prior.
+  const PRIOR_W = 3;
+  const w = played / (played + PRIOR_W);
+  const rawGpg = goals / played;
+  const rawApg = assists / played;
+  const rawMpg = potm   / played;
+  // Blend then clamp: max gpg=0.9 per game (even Mbappe doesn't score every game)
+  const gpg = Math.min(0.90, w * rawGpg + (1 - w) * PRIOR_GPG);
+  const apg = Math.min(0.60, w * rawApg + (1 - w) * PRIOR_APG);
+  const mpg = Math.min(0.40, w * rawMpg + (1 - w) * PRIOR_MPG);
 
   const stageReached = team ? (team.stage_reached || 'GS') : 'GS';
   const stageRank    = STAGE_RANKS[stageReached] || 0;
@@ -5223,11 +5302,19 @@ function renderCeiling() {
       // Player proj: use expectedPlayerPoints output directly (expPts already
       // factors in form, games remaining, and team progression probability).
       // For transfers, expPts may not be set -- fall back to likelihood-based estimate.
-      return Math.round(items.filter(it=>!it.elim&&it.likely>0)
-        .reduce((s,it) => {
-          const base = it.expPts != null ? it.expPts : (it.likely/100) * 4;
-          return s + base * (it.mult||1);
-        }, 0));
+      // Apply a portfolio discount: having 7 players doesn't mean you get all
+      // their expected points — games overlap and top picks share fixtures.
+      // Discount factor: sqrt(n/7) for n active players (diversification diminishing returns).
+      const activeItems = items.filter(it=>!it.elim&&it.likely>0);
+      const rawTotal = activeItems.reduce((s,it) => {
+        const base = it.expPts != null ? it.expPts : (it.likely/100) * 4;
+        return s + base * (it.mult||1);
+      }, 0);
+      // Portfolio discount: diminishing returns for having multiple picks in same games
+      // Roughly: first player contributes ~100%, 7th contributes ~60% of their individual estimate
+      const n = Math.max(activeItems.length, 1);
+      const discount = Math.min(1.0, Math.sqrt(n / Math.max(n, 4)) * 0.85 + 0.15);
+      return Math.round(rawTotal * discount);
     }
     if (sec.key==='team') {
       // Team proj: each team pick earns pts for each win remaining
