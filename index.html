@@ -172,6 +172,23 @@ tr:hover td{ background:rgba(255,255,255,.04); }
   .pts-toggle{ display:inline-block; }
 }
 
+/* ---- MOBILE COLUMN COLLAPSE (Player Stats / Transfers / Team Stats) ---- */
+.mob-col-ps, .mob-col-tr, .mob-col-ts{ display:table-cell; }
+.mob-toggle{ display:none; }
+@media(max-width:640px){
+  .mob-col-ps, .mob-col-tr, .mob-col-ts{ display:none; }
+  .mob-col-ps.visible, .mob-col-tr.visible, .mob-col-ts.visible{ display:table-cell; }
+  .mob-toggle{ display:inline-block; margin-bottom:12px; }
+}
+
+/* ---- MOBILE: condense Double/Triple Unique tables to fit one screen ---- */
+@media(max-width:480px){
+  #du-table, #tu-table{ font-size:.72rem; }
+  #du-table th, #tu-table th{ padding:6px 4px; font-size:.62rem; letter-spacing:.02em; }
+  #du-table td, #tu-table td{ padding:6px 4px; }
+  #du-table .badge, #tu-table .badge{ padding:1px 5px; font-size:.6rem; }
+}
+
 /* ---- MY PICKS ---- */
 .picks-selector{ margin-bottom:22px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
 .picks-selector label{ font-weight:600; color:var(--muted); font-size:.9rem; }
@@ -1112,7 +1129,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
     <h3>ℹ️ Latest Refresh — What's Included</h3>
     <div class="info-row">
       <span class="info-lbl">Generated</span>
-      <span class="info-val">04 July 2026 at 18:34</span>
+      <span class="info-val">04 July 2026 at 19:35</span>
     </div>
     <div class="info-row">
       <span class="info-lbl">Results included</span>
@@ -1444,21 +1461,28 @@ body:not(.has-bonus) .bonus-col { display:none; }
     <span id="ps-count-label" style="color:var(--muted);font-size:.85rem;font-weight:600"></span>
     <label>Search:</label>
     <input type="text" id="ps-search" placeholder="Player or team name…" oninput="filterPlayerStats()">
+    <label style="margin-left:auto">Active:</label>
+    <select id="ps-active-filter" onchange="filterPlayerStats()">
+      <option value="all">All players</option>
+      <option value="active">Active only</option>
+      <option value="out">Eliminated only</option>
+    </select>
   </div>
+  <button class="rem-toggle mob-toggle" onclick="toggleMobCols('ps',this)">Show all columns ▼</button>
   <div class="tbl-wrap">
   <table id="ps-table">
     <thead>
     <tr>
       <th class="left sortable" onclick="sortTable('ps-table',0,this)">Player <span class="sort-arrow">↕</span></th>
-      <th class="left sortable" onclick="sortTable('ps-table',1,this)">Team <span class="sort-arrow">↕</span></th>
-      <th class="sortable" onclick="sortTable('ps-table',2,this)">Pos <span class="sort-arrow">↕</span></th>
-      <th class="sortable" onclick="sortTable('ps-table',3,this)">Pick Type <span class="sort-arrow">↕</span></th>
-      <th class="sortable" onclick="sortTable('ps-table',4,this)">Mult <span class="sort-arrow">↕</span></th>
-      <th class="sortable" onclick="sortTable('ps-table',5,this)" title="Goals / Assists / POTM scored (with pts earned)">Events <span class="sort-arrow">↕</span></th>
+      <th class="left sortable mob-col-ps" onclick="sortTable('ps-table',1,this)">Team <span class="sort-arrow">↕</span></th>
+      <th class="sortable mob-col-ps" onclick="sortTable('ps-table',2,this)">Pos <span class="sort-arrow">↕</span></th>
+      <th class="sortable mob-col-ps" onclick="sortTable('ps-table',3,this)">Pick Type <span class="sort-arrow">↕</span></th>
+      <th class="sortable mob-col-ps" onclick="sortTable('ps-table',4,this)">Mult <span class="sort-arrow">↕</span></th>
+      <th class="sortable mob-col-ps" onclick="sortTable('ps-table',5,this)" title="Goals / Assists / POTM scored (with pts earned)">Events <span class="sort-arrow">↕</span></th>
       <th class="sortable" onclick="sortTable('ps-table',6,this)">Player Pts <span class="sort-arrow">↕</span></th>
-      <th class="sortable" onclick="sortTable('ps-table',7,this)" title="Yellow and red cards received (with pts earned)">Cards <span class="sort-arrow">↕</span></th>
+      <th class="sortable mob-col-ps" onclick="sortTable('ps-table',7,this)" title="Yellow and red cards received (with pts earned)">Cards <span class="sort-arrow">↕</span></th>
       <th class="sortable" onclick="sortTable('ps-table',8,this)">Naughty Pts <span class="sort-arrow">↕</span></th>
-      <th class="sortable xfer-ps-col" onclick="sortTable('ps-table',9,this)" title="Transfer goals / assists / POTM (with pts earned)">Tr Events <span class="sort-arrow">↕</span></th>
+      <th class="sortable xfer-ps-col mob-col-ps" onclick="sortTable('ps-table',9,this)" title="Transfer goals / assists / POTM (with pts earned)">Tr Events <span class="sort-arrow">↕</span></th>
       <th class="sortable xfer-ps-col" onclick="sortTable('ps-table',10,this)">Transfer Pts <span class="sort-arrow">↕</span></th>
       <th class="sortable" onclick="sortTable('ps-table',11,this)">Active <span class="sort-arrow">↕</span></th>
       <th class="sortable" onclick="sortTable('ps-table',12,this)" title="Total unique entrants who picked this player in any capacity">Owners <span class="sort-arrow">↕</span></th>
@@ -1479,17 +1503,27 @@ body:not(.has-bonus) .bonus-col { display:none; }
     Transfer picks made after the Round of 32. Scored from Last 16 onwards only.
     <strong style="color:var(--gold)">2×</strong> multiplier if picked by exactly one entrant.
   </p>
+  <div class="filter-bar">
+    <span id="tr-count-label" style="color:var(--muted);font-size:.85rem;font-weight:600"></span>
+    <label style="margin-left:auto">Active:</label>
+    <select id="tr-active-filter" onchange="renderTransfers()">
+      <option value="all">All players</option>
+      <option value="active">Active only</option>
+      <option value="out">Eliminated only</option>
+    </select>
+  </div>
+  <button class="rem-toggle mob-toggle" onclick="toggleMobCols('tr',this)">Show all columns ▼</button>
   <div class="tbl-wrap">
   <table id="tr-table">
     <thead>
     <tr>
       <th class="left sortable" onclick="sortTable('tr-table',0,this)">Player <span class="sort-arrow">↕</span></th>
-      <th class="left sortable" onclick="sortTable('tr-table',1,this)">Team <span class="sort-arrow">↕</span></th>
-      <th class="sortable" onclick="sortTable('tr-table',2,this)">Pos <span class="sort-arrow">↕</span></th>
+      <th class="left sortable mob-col-tr" onclick="sortTable('tr-table',1,this)">Team <span class="sort-arrow">↕</span></th>
+      <th class="sortable mob-col-tr" onclick="sortTable('tr-table',2,this)">Pos <span class="sort-arrow">↕</span></th>
       <th class="sortable" onclick="sortTable('tr-table',3,this)">Pickers <span class="sort-arrow">↕</span></th>
       <th class="sortable" onclick="sortTable('tr-table',4,this)">Mult <span class="sort-arrow">↕</span></th>
       <th class="sortable" onclick="sortTable('tr-table',5,this)">Pts <span class="sort-arrow">↕</span></th>
-      <th class="sortable" onclick="sortTable('tr-table',6,this)" title="Goals / Assists / POTM scored (with pts earned)">Events <span class="sort-arrow">↕</span></th>
+      <th class="sortable mob-col-tr" onclick="sortTable('tr-table',6,this)" title="Goals / Assists / POTM scored (with pts earned)">Events <span class="sort-arrow">↕</span></th>
       <th class="sortable" onclick="sortTable('tr-table',7,this)">Active <span class="sort-arrow">↕</span></th>
       <th class="left" style="width:1%;white-space:nowrap">Picked By</th>
     </tr>
@@ -1518,23 +1552,30 @@ body:not(.has-bonus) .bonus-col { display:none; }
     </select>
     <label>Search:</label>
     <input type="text" id="ts-search" placeholder="Team name…" oninput="filterTeamStats()">
+    <label style="margin-left:auto">Active:</label>
+    <select id="ts-active-filter" onchange="filterTeamStats()">
+      <option value="all">All teams</option>
+      <option value="active">Active only</option>
+      <option value="out">Eliminated only</option>
+    </select>
   </div>
+  <button class="rem-toggle mob-toggle" onclick="toggleMobCols('ts',this)">Show all columns ▼</button>
   <div class="tbl-wrap">
   <table id="ts-table">
     <thead><tr>
       <th class="left sortable" onclick="sortTable('ts-table',0,this)">Team <span class="sort-arrow">↕</span></th>
       <th class="sortable" onclick="sortTable('ts-table',1,this)">Pot <span class="sort-arrow">↕</span></th>
-      <th class="sortable" onclick="sortTable('ts-table',2,this)">Grp <span class="sort-arrow">↕</span></th>
-      <th class="sortable" onclick="sortTable('ts-table',3,this)">P <span class="sort-arrow">↕</span></th>
-      <th class="sortable" onclick="sortTable('ts-table',4,this)">W <span class="sort-arrow">↕</span></th>
-      <th class="sortable" onclick="sortTable('ts-table',5,this)">D <span class="sort-arrow">↕</span></th>
-      <th class="sortable" onclick="sortTable('ts-table',6,this)">L <span class="sort-arrow">↕</span></th>
-      <th class="sortable" onclick="sortTable('ts-table',7,this)">GF <span class="sort-arrow">↕</span></th>
-      <th class="sortable" onclick="sortTable('ts-table',8,this)">GA <span class="sort-arrow">↕</span></th>
+      <th class="sortable mob-col-ts" onclick="sortTable('ts-table',2,this)">Grp <span class="sort-arrow">↕</span></th>
+      <th class="sortable mob-col-ts" onclick="sortTable('ts-table',3,this)">P <span class="sort-arrow">↕</span></th>
+      <th class="sortable mob-col-ts" onclick="sortTable('ts-table',4,this)">W <span class="sort-arrow">↕</span></th>
+      <th class="sortable mob-col-ts" onclick="sortTable('ts-table',5,this)">D <span class="sort-arrow">↕</span></th>
+      <th class="sortable mob-col-ts" onclick="sortTable('ts-table',6,this)">L <span class="sort-arrow">↕</span></th>
+      <th class="sortable mob-col-ts" onclick="sortTable('ts-table',7,this)">GF <span class="sort-arrow">↕</span></th>
+      <th class="sortable mob-col-ts" onclick="sortTable('ts-table',8,this)">GA <span class="sort-arrow">↕</span></th>
       <th class="sortable" onclick="sortTable('ts-table',9,this)">GD <span class="sort-arrow">↕</span></th>
-      <th class="sortable" onclick="sortTable('ts-table',10,this)">GS Goals <span class="sort-arrow">↕</span></th>
-      <th class="sortable" onclick="sortTable('ts-table',11,this)">Yellows <span class="sort-arrow">↕</span></th>
-      <th class="sortable" onclick="sortTable('ts-table',12,this)">Reds <span class="sort-arrow">↕</span></th>
+      <th class="sortable mob-col-ts" onclick="sortTable('ts-table',10,this)">GS Goals <span class="sort-arrow">↕</span></th>
+      <th class="sortable mob-col-ts" onclick="sortTable('ts-table',11,this)">Yellows <span class="sort-arrow">↕</span></th>
+      <th class="sortable mob-col-ts" onclick="sortTable('ts-table',12,this)">Reds <span class="sort-arrow">↕</span></th>
       <th class="sortable" onclick="sortTable('ts-table',13,this)">Total Cards <span class="sort-arrow">↕</span></th>
       <th class="sortable" onclick="sortTable('ts-table',14,this)">Comp Pts <span class="sort-arrow">↕</span></th>
       <th class="sortable" onclick="sortTable('ts-table',15,this)">Stage <span class="sort-arrow">↕</span></th>
@@ -1776,7 +1817,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   </div>
 </div>
 
-<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 04 July 2026 at 18:34</div>
+<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 04 July 2026 at 19:35</div>
 
 <!-- ANNOUNCEMENT FLOATING BUTTON -->
 <button class="announce-fab" onclick="document.getElementById('announce-modal').classList.add('open'); markAnnouncementRead()" id="announce-fab">
@@ -1791,7 +1832,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   <div class="modal-inner">
     <button class="modal-close" onclick="document.getElementById('announce-modal').classList.remove('open')">✕</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:800;color:var(--gold);margin-bottom:12px">📢 Latest Announcement</h2>
-    <div class="announce-from">From Danni · 04 July 2026 at 18:34</div>
+    <div class="announce-from">From Danni · 04 July 2026 at 19:35</div>
     <div class="announce-body" id="announce-body" style="margin-top:16px">The Round of 32 is done...
 
 ...PLAYER TRANSFERS ARE IN!!
@@ -1886,13 +1927,13 @@ function submitReport(method) {
   lines.push('');
   lines.push(msg);
   lines.push('');
-  lines.push('(Generated: 04 July 2026 at 18:34)');
+  lines.push('(Generated: 04 July 2026 at 19:35)');
   const bodyText = lines.join(String.fromCharCode(10));
   if (method === 'email') {
     const subject = 'WC2026 Leaderboard - Error Report';
     window.open('mailto:danielle.pearson@live.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText), '_blank');
   } else {
-    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 04 July 2026 at 18:34)';
+    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 04 July 2026 at 19:35)';
     window.open('https://wa.me/447909334688?text=' + encodeURIComponent(waText), '_blank');
   }
   // Close modal after short delay so user sees confirmation
@@ -2066,7 +2107,15 @@ function renderTransfers() {
   trRendered = true;
   const tbody = document.getElementById('tr-body');
   if (!tbody) return;
-  tbody.innerHTML = TRANSFER_STATS.map(r => {
+  const activeFilter = document.getElementById('tr-active-filter').value;
+  const filtered = TRANSFER_STATS.filter(r => {
+    if (activeFilter === 'active' && r.is_active === false) return false;
+    if (activeFilter === 'out'    && r.is_active !== false) return false;
+    return true;
+  });
+  const countLabel = document.getElementById('tr-count-label');
+  if (countLabel) countLabel.textContent = `Showing ${filtered.length} player${filtered.length !== 1 ? 's' : ''}`;
+  tbody.innerHTML = filtered.map(r => {
     const multBadge = r.multiplier === 2
       ? '<span class="badge badge-gold" style="font-size:.85rem;padding:3px 10px">2×</span>'
       : '<span style="color:var(--muted);font-size:.85rem">1×</span>';
@@ -2095,18 +2144,20 @@ function renderTransfers() {
 
     return `<tr>
       <td class="left"><strong>${r.player_name}</strong></td>
-      <td class="left">${r.team_name}</td>
-      <td>${r.position}</td>
+      <td class="left mob-col-tr">${r.team_name}</td>
+      <td class="mob-col-tr">${r.position}</td>
       <td>${r.picker_count}</td>
       <td>${multBadge}</td>
       <td class="score-cell">${r.points}</td>
-      <td class="left" style="font-size:.82rem">${evCell}</td>
+      <td class="left mob-col-tr" style="font-size:.82rem">${evCell}</td>
       <td>${activeBadgeTr}</td>
       ${trPickedByCell}
     </tr>`;
   }).join('');
   if (!TRANSFER_STATS.length) {
     tbody.innerHTML = '<tr><td colspan="9" style="color:var(--muted);text-align:center">No transfer picks yet.</td></tr>';
+  } else if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="9" style="color:var(--muted);text-align:center">No players match this filter.</td></tr>';
   }
 }
 
@@ -2485,6 +2536,16 @@ function togglePtsBreakdown(btn) {
   const show = cols[0].classList.toggle('visible');
   cols.forEach(c => c.classList.toggle('visible', show));
   btn.textContent = show ? 'Hide Points Breakdown ▲' : 'Show Points Breakdown ▼';
+}
+
+// ---- Mobile column collapse toggle (Player Stats / Transfers / Team Stats) ----
+// prefix matches the .mob-col-<prefix> class applied to that table's collapsible cells
+function toggleMobCols(prefix, btn) {
+  const cols = document.querySelectorAll('.mob-col-' + prefix);
+  if (!cols.length) return;
+  const show = cols[0].classList.toggle('visible');
+  cols.forEach(c => c.classList.toggle('visible', show));
+  btn.textContent = show ? 'Show fewer columns ▲' : 'Show all columns ▼';
 }
 
 // ---- Leaderboard ----
@@ -3020,9 +3081,10 @@ function renderPlayerStats() {
 }
 
 function filterPlayerStats() {
-  const typeFilter = document.getElementById('ps-type-filter').value;
-  const search     = document.getElementById('ps-search').value.toLowerCase();
-  const tbody      = document.getElementById('ps-body');
+  const typeFilter   = document.getElementById('ps-type-filter').value;
+  const search       = document.getElementById('ps-search').value.toLowerCase();
+  const activeFilter = document.getElementById('ps-active-filter').value;
+  const tbody        = document.getElementById('ps-body');
 
   let filtered = psData.filter(r => {
     const cats = r.pick_type.split('+');
@@ -3031,6 +3093,8 @@ function filterPlayerStats() {
     if (typeFilter === 'unique'   && r.o_mult !== 2 && r.t_mult !== 3) return false;
     if (typeFilter === 'naughty'  && !cats.includes('naughty'))  return false;
     if (typeFilter === 'transfer' && !cats.includes('transfer')) return false;
+    if (activeFilter === 'active' && r.is_active === false) return false;
+    if (activeFilter === 'out'    && r.is_active !== false) return false;
     if (search && !r.player_name.toLowerCase().includes(search) &&
         !r.team_name.toLowerCase().includes(search)) return false;
     return true;
@@ -3143,15 +3207,15 @@ function filterPlayerStats() {
 
     return `<tr>
       <td class="left"><strong>${r.player_name}</strong></td>
-      <td class="left">${r.team_name}</td>
-      <td>${r.position}</td>
-      <td>${typeLabel}</td>
-      <td>${multStr}</td>
-      <td class="left" style="font-size:.82rem">${eventsCell}</td>
+      <td class="left mob-col-ps">${r.team_name}</td>
+      <td class="mob-col-ps">${r.position}</td>
+      <td class="mob-col-ps">${typeLabel}</td>
+      <td class="mob-col-ps">${multStr}</td>
+      <td class="left mob-col-ps" style="font-size:.82rem">${eventsCell}</td>
       <td class="score-cell">${r.player_points}</td>
-      <td class="left" style="font-size:.82rem">${cardsCell}</td>
+      <td class="left mob-col-ps" style="font-size:.82rem">${cardsCell}</td>
       <td class="score-cell">${r.naughty_points}</td>
-      <td class="left xfer-ps-col" style="font-size:.82rem">${trEvCell}</td>
+      <td class="left xfer-ps-col mob-col-ps" style="font-size:.82rem">${trEvCell}</td>
       <td class="score-cell xfer-ps-col">${r.transfer_points}</td>
       <td>${activeBadgePS}</td>
       <td style="color:var(--muted);font-size:.85rem">${pickerCount || '—'}</td>
@@ -3213,12 +3277,15 @@ function renderTeamStats() {
 }
 
 function filterTeamStats() {
-  const potFilter = parseInt(document.getElementById('ts-pot-filter').value);
-  const search    = document.getElementById('ts-search').value.toLowerCase();
-  const tbody     = document.getElementById('ts-body');
+  const potFilter    = parseInt(document.getElementById('ts-pot-filter').value);
+  const search       = document.getElementById('ts-search').value.toLowerCase();
+  const activeFilter = document.getElementById('ts-active-filter').value;
+  const tbody        = document.getElementById('ts-body');
 
   let filtered = tsData.filter(r => {
     if (potFilter > 0 && r.pot !== potFilter) return false;
+    if (activeFilter === 'active' && r.is_eliminated === true)  return false;
+    if (activeFilter === 'out'    && r.is_eliminated !== true)  return false;
     if (search && !r.team_name.toLowerCase().includes(search)) return false;
     return true;
   });
@@ -3254,17 +3321,17 @@ function filterTeamStats() {
     return `<tr>
       <td class="left"><strong>${r.team_name}</strong></td>
       <td>${r.pot}</td>
-      <td>${r.group}</td>
-      <td>${r.played}</td>
-      <td>${r.wins}</td>
-      <td>${r.draws}</td>
-      <td>${r.losses}</td>
-      <td>${r.goals_for}</td>
-      <td>${r.goals_against}</td>
+      <td class="mob-col-ts">${r.group}</td>
+      <td class="mob-col-ts">${r.played}</td>
+      <td class="mob-col-ts">${r.wins}</td>
+      <td class="mob-col-ts">${r.draws}</td>
+      <td class="mob-col-ts">${r.losses}</td>
+      <td class="mob-col-ts">${r.goals_for}</td>
+      <td class="mob-col-ts">${r.goals_against}</td>
       <td style="font-weight:600;color:${r.goal_difference>=0?'var(--green)':'var(--red)'}">${gdStr}</td>
-      <td>${r.goals_in_group_stage}</td>
-      <td>${r.yellow_cards}</td>
-      <td style="color:${r.red_cards>0?'var(--red)':'inherit'}">${r.red_cards}</td>
+      <td class="mob-col-ts">${r.goals_in_group_stage}</td>
+      <td class="mob-col-ts">${r.yellow_cards}</td>
+      <td class="mob-col-ts" style="color:${r.red_cards>0?'var(--red)':'inherit'}">${r.red_cards}</td>
       <td style="color:${r.total_cards>0?'var(--amber,#e67e22)':'inherit'};font-weight:${r.total_cards>0?'600':'400'}">${r.total_cards}</td>
       <td style="${compPtsStyle}">${r.competition_points}</td>
       <td>${stageBadge}</td>
@@ -3696,6 +3763,7 @@ function renderComparison() {
     ['QFs',       lRow.qf_points_total,           rRow.qf_points_total,           false],
     ['Potluck',   lRow.potluck_points_total,      rRow.potluck_points_total,      false],
     ['Questions', lRow.category_points_total,     rRow.category_points_total,     false],
+    ['Transfers', lRow.transfer_points_total,     rRow.transfer_points_total,     false],
     ['TOTAL',     lRow.total_points,              rRow.total_points,              true],
   ].map(([l,lv,rv,last]) => scoreRow(l,lv,rv,last)).join('');
 
@@ -3706,7 +3774,7 @@ function renderComparison() {
     if (!p || !p.answer) return '<span style="color:rgba(255,255,255,.15)">—</span>';
 
     // ── Triple void check ──
-    const isVoid = p.triple_status === 'void';
+    const isVoid = p.triple_status === 'void' || p.isVoid === true;
 
     // ── Status pill (truth-based) ──
     let status = null;
@@ -3891,6 +3959,8 @@ function renderComparison() {
   const rPotluck   = flatPotluck(rPicks);
   const lQuestions = flatQuestions(lPicks);
   const rQuestions = flatQuestions(rPicks);
+  const lTransfers = (lPicks.transfers||[]).filter(p=>p&&p.answer);
+  const rTransfers = (rPicks.transfers||[]).filter(p=>p&&p.answer);
 
     const ptsDiff = (parseFloat(lRow.total_points)||0) - (parseFloat(rRow.total_points)||0);
   const ptsDiffStr = ptsDiff > 0
@@ -3936,6 +4006,7 @@ function renderComparison() {
     ${picksSection(lQFs,      rQFs,      '🏅 Quarter-Finalists',  8,  {qfCheck:true})}
     ${picksSection(lPotluck,  rPotluck,  '🎲 Potluck',           16,  {})}
     ${picksSection(lQuestions,rQuestions,'❓ Category Questions', 10,  {})}
+    ${picksSection(lTransfers,rTransfers,'🔄 Player Transfers',   2,  {})}
   </div>`;
 }
 
@@ -5530,8 +5601,25 @@ function renderCeiling() {
       renderItem: it => {
         const st    = it.earned>0?'confirmed_correct':it.scenarioWin?'on_track':truthStatus(it.qid,it.answer,it.team_id||'');
         const badge = statusPillCompact(st, isMobile);
-        const pctCol= it.earned>0?'var(--green)':it.likely>=70?'var(--green)':it.likely>=40?'var(--gold)':'rgba(233,69,96,.7)';
-        const pctStr= it.earned>0?'✓':it.elim?'—':`${it.likely}%`;
+        // % display rules:
+        //  - already earned (confirmed + correct)      -> ✓, no %
+        //  - truth confirmed but this pick is wrong      -> ✗, no %
+        //  - eliminated team, truth not yet confirmed,
+        //    and not on-track (i.e. genuinely can't win)  -> 0%
+        //  - otherwise (active, or eliminated-but-on-track
+        //    e.g. a locked-in Goals/Cards leader)          -> real likelihood %
+        const confirmedTruth = TRUTH_LKP[it.qid] && TRUTH_LKP[it.qid].is_confirmed;
+        let pctStr, pctCol;
+        if (it.earned > 0) {
+          pctStr = '✓'; pctCol = 'var(--green)';
+        } else if (confirmedTruth) {
+          pctStr = '✗'; pctCol = 'rgba(233,69,96,.7)';
+        } else if (it.elim && st !== 'on_track') {
+          pctStr = '0%'; pctCol = 'rgba(233,69,96,.7)';
+        } else {
+          pctStr = `${it.likely}%`;
+          pctCol = it.likely>=70?'var(--green)':it.likely>=40?'var(--gold)':'rgba(233,69,96,.7)';
+        }
         return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06)">
           ${!isMobile?`<span style="font-size:.64rem;color:var(--muted);flex-shrink:0;white-space:nowrap;min-width:64px">${it.label}</span>`:''}
           <span style="flex:1;font-size:.72rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">${it.answer}${it.scenarioWin?' ★':''}</span>
@@ -5546,8 +5634,19 @@ function renderCeiling() {
       renderItem: it => {
         const st    = it.earned>0?'confirmed_correct':it.scenarioWin?'on_track':truthStatus(it.qid,it.answer,it.team_id||'');
         const badge = statusPillCompact(st, isMobile);
-        const pctCol= it.earned>0?'var(--green)':it.likely>=70?'var(--green)':it.likely>=40?'var(--gold)':'rgba(233,69,96,.7)';
-        const pctStr= it.earned>0?'✓':it.elim?'—':`${it.likely}%`;
+        // Same % display rules as Potluck above.
+        const confirmedTruth = TRUTH_LKP[it.qid] && TRUTH_LKP[it.qid].is_confirmed;
+        let pctStr, pctCol;
+        if (it.earned > 0) {
+          pctStr = '✓'; pctCol = 'var(--green)';
+        } else if (confirmedTruth) {
+          pctStr = '✗'; pctCol = 'rgba(233,69,96,.7)';
+        } else if (it.elim && st !== 'on_track') {
+          pctStr = '0%'; pctCol = 'rgba(233,69,96,.7)';
+        } else {
+          pctStr = `${it.likely}%`;
+          pctCol = it.likely>=70?'var(--green)':it.likely>=40?'var(--gold)':'rgba(233,69,96,.7)';
+        }
         return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06)">
           ${!isMobile?`<span style="font-size:.62rem;color:var(--muted);flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:80px;max-width:90px">${it.label}</span>`:''}
           <span style="flex:1;font-size:.72rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">${it.answer}${it.scenarioWin?' ★':''}</span>
