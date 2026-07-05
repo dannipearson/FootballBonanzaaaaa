@@ -1133,7 +1133,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
     <h3>ℹ️ Latest Refresh — What's Included</h3>
     <div class="info-row">
       <span class="info-lbl">Generated</span>
-      <span class="info-val">05 July 2026 at 08:01</span>
+      <span class="info-val">05 July 2026 at 08:55</span>
     </div>
     <div class="info-row">
       <span class="info-lbl">Results included</span>
@@ -1458,6 +1458,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
     <select id="ps-type-filter" onchange="filterPlayerStats()">
       <option value="all">All picks</option>
       <option value="players">⚽ Players (Outfield + Triple)</option>
+      <option value="players_transfers" id="ps-players-transfers-opt" style="display:none">⚽🔄 Outfield + Transfers (no Naughty)</option>
       <option value="unique">⭐ Unique picks only (2× or 3×)</option>
       <option value="naughty">😈 Naughty Step</option>
       <option value="transfer" id="ps-transfer-opt" style="display:none">🔄 Transfers</option>
@@ -1821,7 +1822,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   </div>
 </div>
 
-<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 05 July 2026 at 08:01</div>
+<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 05 July 2026 at 08:55</div>
 
 <!-- ANNOUNCEMENT FLOATING BUTTON -->
 <button class="announce-fab" onclick="document.getElementById('announce-modal').classList.add('open'); markAnnouncementRead()" id="announce-fab">
@@ -1836,7 +1837,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   <div class="modal-inner">
     <button class="modal-close" onclick="document.getElementById('announce-modal').classList.remove('open')">✕</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:800;color:var(--gold);margin-bottom:12px">📢 Latest Announcement</h2>
-    <div class="announce-from">From Danni · 05 July 2026 at 08:01</div>
+    <div class="announce-from">From Danni · 05 July 2026 at 08:55</div>
     <div class="announce-body" id="announce-body" style="margin-top:16px">The Round of 32 is done...
 
 ...PLAYER TRANSFERS ARE IN!!
@@ -1931,13 +1932,13 @@ function submitReport(method) {
   lines.push('');
   lines.push(msg);
   lines.push('');
-  lines.push('(Generated: 05 July 2026 at 08:01)');
+  lines.push('(Generated: 05 July 2026 at 08:55)');
   const bodyText = lines.join(String.fromCharCode(10));
   if (method === 'email') {
     const subject = 'WC2026 Leaderboard - Error Report';
     window.open('mailto:danielle.pearson@live.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText), '_blank');
   } else {
-    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 05 July 2026 at 08:01)';
+    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 05 July 2026 at 08:55)';
     window.open('https://wa.me/447909334688?text=' + encodeURIComponent(waText), '_blank');
   }
   // Close modal after short delay so user sees confirmation
@@ -1961,6 +1962,8 @@ const SHOW_TRANSFER_ENTRY = false;
     if (tBtn) tBtn.style.display = '';
     const tOpt = document.getElementById('ps-transfer-opt');
     if (tOpt) tOpt.style.display = '';
+    const ptOpt = document.getElementById('ps-players-transfers-opt');
+    if (ptOpt) ptOpt.style.display = '';
   }
   if (HAS_BONUS) {
     document.body.classList.add('has-bonus');
@@ -3120,7 +3123,15 @@ function filterPlayerStats() {
     const cats = r.pick_type.split('+');
     // 'players' = outfield picks OR true triple-unique (t_mult===3)
     if (typeFilter === 'players'  && !cats.includes('outfield') && r.t_mult !== 3) return false;
-    if (typeFilter === 'unique'   && r.o_mult !== 2 && r.t_mult !== 3) return false;
+    // 'players_transfers' = players, PLUS transfers, but never naughty-only rows
+    if (typeFilter === 'players_transfers' &&
+        !cats.includes('outfield') && r.t_mult !== 3 && !cats.includes('transfer')) return false;
+    // 'unique' = double-unique outfield, true triple, OR double-unique transfer —
+    // three independent multiplier pools, all still "unique" in the sense that
+    // matters to an entrant. r.tr_mult defaults to 0 for any player with no
+    // transfer pick (or in a competition with no transfers at all), so this
+    // never fires unless a real double-unique transfer pick exists.
+    if (typeFilter === 'unique'   && r.o_mult !== 2 && r.t_mult !== 3 && r.tr_mult !== 2) return false;
     if (typeFilter === 'naughty'  && !cats.includes('naughty'))  return false;
     if (typeFilter === 'transfer' && !cats.includes('transfer')) return false;
     if (activeFilter === 'active' && r.is_active === false) return false;
@@ -3151,6 +3162,10 @@ function filterPlayerStats() {
       pickedByDisplay = r.picked_by.split(' | ')
         .filter(p => p.startsWith('Outfield:') || p.startsWith('Triple'))
         .join(' | ');
+    } else if (typeFilter === 'players_transfers') {
+      pickedByDisplay = r.picked_by.split(' | ')
+        .filter(p => p.startsWith('Outfield:') || p.startsWith('Triple') || p.startsWith('Transfer'))
+        .join(' | ');
     } else if (typeFilter === 'naughty') {
       pickedByDisplay = r.picked_by.split(' | ')
         .filter(p => p.startsWith('Naughty:'))
@@ -3172,6 +3187,12 @@ function filterPlayerStats() {
       typeLabel = lparts.join(' + ');
     } else if (typeFilter === 'players') {
       typeLabel = isTriple ? '💎 Triple' : '⚽ Outfield';
+    } else if (typeFilter === 'players_transfers') {
+      const lparts = [];
+      if (isOutfield)  lparts.push('⚽ Outfield');
+      if (isTriple)    lparts.push('💎 Triple');
+      if (isTransfer)  lparts.push('🔄 Transfer');
+      typeLabel = lparts.join(' + ');
     } else if (typeFilter === 'naughty') {
       typeLabel = '😈 Naughty';
     } else if (typeFilter === 'transfer') {
@@ -3197,7 +3218,10 @@ function filterPlayerStats() {
         if (r.o_mult === 2) multStr += '<span class="badge badge-gold" style="font-size:.85rem;padding:3px 10px">2×</span>';
         else                multStr += '<span style="color:var(--muted);font-size:.85rem">1×</span>';
       }
-      if (typeFilter === 'all') {
+      // Show the transfer badge on any view broad enough to include transfer
+      // picks in the first place — 'all', the new 'players_transfers', and
+      // 'unique' (since double-unique transfers now qualify for that filter).
+      if (typeFilter === 'all' || typeFilter === 'players_transfers' || typeFilter === 'unique') {
         if (r.tr_mult === 2)                   multStr += ' <span class="badge badge-gold" style="font-size:.8rem">🔄 2×</span>';
         else if (r.tr_mult === 1 && isTransfer) multStr += ' <span style="color:var(--muted);font-size:.85rem">🔄 1×</span>';
       }
