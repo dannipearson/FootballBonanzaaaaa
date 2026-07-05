@@ -1133,7 +1133,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
     <h3>ℹ️ Latest Refresh — What's Included</h3>
     <div class="info-row">
       <span class="info-lbl">Generated</span>
-      <span class="info-val">05 July 2026 at 21:28</span>
+      <span class="info-val">05 July 2026 at 21:36</span>
     </div>
     <div class="info-row">
       <span class="info-lbl">Results included</span>
@@ -1822,7 +1822,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   </div>
 </div>
 
-<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 05 July 2026 at 21:28</div>
+<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 05 July 2026 at 21:36</div>
 
 <!-- ANNOUNCEMENT FLOATING BUTTON -->
 <button class="announce-fab" onclick="document.getElementById('announce-modal').classList.add('open'); markAnnouncementRead()" id="announce-fab">
@@ -1837,7 +1837,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   <div class="modal-inner">
     <button class="modal-close" onclick="document.getElementById('announce-modal').classList.remove('open')">✕</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:800;color:var(--gold);margin-bottom:12px">📢 Latest Announcement</h2>
-    <div class="announce-from">From Danni · 05 July 2026 at 21:28</div>
+    <div class="announce-from">From Danni · 05 July 2026 at 21:36</div>
     <div class="announce-body" id="announce-body" style="margin-top:16px">The Round of 32 is done...
 
 ...PLAYER TRANSFERS ARE IN!!
@@ -1932,13 +1932,13 @@ function submitReport(method) {
   lines.push('');
   lines.push(msg);
   lines.push('');
-  lines.push('(Generated: 05 July 2026 at 21:28)');
+  lines.push('(Generated: 05 July 2026 at 21:36)');
   const bodyText = lines.join(String.fromCharCode(10));
   if (method === 'email') {
     const subject = 'WC2026 Leaderboard - Error Report';
     window.open('mailto:danielle.pearson@live.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText), '_blank');
   } else {
-    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 05 July 2026 at 21:28)';
+    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 05 July 2026 at 21:36)';
     window.open('https://wa.me/447909334688?text=' + encodeURIComponent(waText), '_blank');
   }
   // Close modal after short delay so user sees confirmation
@@ -2269,15 +2269,14 @@ function renderFeed() {
           badgeTypes = typeEntries.map(([lbl]) => lbl);
           pickersHtml = typeEntries.map(([lbl, names]) => {
             const groupLabel = (lbl === 'Outfield' && p.multiplier === 2) ? 'Double'
-                              : (lbl === 'Transfer' && p.transfer_multiplier === 2) ? 'Double' : lbl;
+                              : (lbl === 'Transfer' && p.transfer_multiplier === 2)
+                                ? '<span class="stake-mult" style="margin-left:0;margin-right:4px">2×</span>Transfer' : lbl;
             return pickerGroupHtml(names, groupLabel);
           }).join('');
         }
         const multLabel = (badgeTypes.includes('Triple')   && p.multiplier === 3) ? ' <span class="stake-mult">3×</span>'
                         : (badgeTypes.includes('Outfield') && p.multiplier === 2) ? ' <span class="stake-mult">2×</span>' : '';
-        const transferMultLabel = (badgeTypes.includes('Transfer') && p.transfer_multiplier === 2)
-                        ? ' <span class="stake-mult">2×</span>' : '';
-        const badges = badgeTypes.map(lbl => TYPE_EMOJI[lbl] || '').join('') + multLabel + transferMultLabel;
+        const badges = badgeTypes.map(lbl => TYPE_EMOJI[lbl] || '').join('') + multLabel;
         const isNaughtyOnly = badgeTypes.length === 1 && badgeTypes[0] === 'Naughty';
         const nameStyle = isNaughtyOnly ? 'color:var(--muted)' : '';
         return `<div class="stake-block${filter ? ' stake-mine' : ''}">
