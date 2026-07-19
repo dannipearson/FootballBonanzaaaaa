@@ -1139,7 +1139,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
     <h3>ℹ️ Latest Refresh — What's Included</h3>
     <div class="info-row">
       <span class="info-lbl">Generated</span>
-      <span class="info-val">19 July 2026 at 14:55</span>
+      <span class="info-val">19 July 2026 at 15:03</span>
     </div>
     <div class="info-row">
       <span class="info-lbl">Results included</span>
@@ -1828,7 +1828,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   </div>
 </div>
 
-<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 19 July 2026 at 14:55</div>
+<div class="footer">World Cup 2026 Bonanzaaaaa · Generated 19 July 2026 at 15:03</div>
 
 <!-- ANNOUNCEMENT FLOATING BUTTON -->
 <button class="announce-fab" onclick="document.getElementById('announce-modal').classList.add('open'); markAnnouncementRead()" id="announce-fab">
@@ -1843,7 +1843,7 @@ body:not(.has-bonus) .bonus-col { display:none; }
   <div class="modal-inner">
     <button class="modal-close" onclick="document.getElementById('announce-modal').classList.remove('open')">✕</button>
     <h2 style="font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:800;color:var(--gold);margin-bottom:12px">📢 Latest Announcement</h2>
-    <div class="announce-from">From Danni · 19 July 2026 at 14:55</div>
+    <div class="announce-from">From Danni · 19 July 2026 at 15:03</div>
     <div class="announce-body" id="announce-body" style="margin-top:16px">So we have made it to the final!
 
 ⚽ Spain vs Argentina⚽
@@ -1944,13 +1944,13 @@ function submitReport(method) {
   lines.push('');
   lines.push(msg);
   lines.push('');
-  lines.push('(Generated: 19 July 2026 at 14:55)');
+  lines.push('(Generated: 19 July 2026 at 15:03)');
   const bodyText = lines.join(String.fromCharCode(10));
   if (method === 'email') {
     const subject = 'WC2026 Leaderboard - Error Report';
     window.open('mailto:danielle.pearson@live.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText), '_blank');
   } else {
-    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 19 July 2026 at 14:55)';
+    const waText = (name ? 'Error report from ' + name + ':' + String.fromCharCode(10) : 'Error report:' + String.fromCharCode(10)) + msg + String.fromCharCode(10) + '(Generated: 19 July 2026 at 15:03)';
     window.open('https://wa.me/447909334688?text=' + encodeURIComponent(waText), '_blank');
   }
   // Close modal after short delay so user sees confirmation
@@ -3632,7 +3632,7 @@ function truthStatus(qid, pickAnswer, pickTeamId) {
     // An eliminated team can still hold the group-stage goals record.
     const matchesTruth = t.correct_team_id
       ? (t.correct_team_id === resolvedTid)
-      : (t.correct_answer||'').trim().toLowerCase() === (pickAnswer||'').trim().toLowerCase();
+      : _normName(t.correct_answer) === _normName(pickAnswer);
     if (confirmed) return matchesTruth ? 'confirmed_correct' : 'confirmed_wrong';
     if (matchesTruth) return 'on_track'; // currently the truth, regardless of elim status
     const infoG = resolvedTid ? TEAM_ELIM[resolvedTid] : null;
@@ -3645,7 +3645,7 @@ function truthStatus(qid, pickAnswer, pickTeamId) {
     if (!t) return null;
     const matchesTruth = t.correct_team_id
       ? (t.correct_team_id === resolvedTid)
-      : (t.correct_answer||'').trim().toLowerCase() === (pickAnswer||'').trim().toLowerCase();
+      : _normName(t.correct_answer) === _normName(pickAnswer);
     if (confirmed) return matchesTruth ? 'confirmed_correct' : 'confirmed_wrong';
     if (matchesTruth) return 'on_track'; // currently leading, regardless of elim status
     const infoC = resolvedTid ? TEAM_ELIM[resolvedTid] : null;
@@ -3658,7 +3658,7 @@ function truthStatus(qid, pickAnswer, pickTeamId) {
     if (!t) return null;
     const matchesTruth = t.correct_team_id
       ? (t.correct_team_id === resolvedTid)
-      : (t.correct_answer||'').trim().toLowerCase() === (pickAnswer||'').trim().toLowerCase();
+      : _normName(t.correct_answer) === _normName(pickAnswer);
     if (confirmed) return matchesTruth ? 'confirmed_correct' : 'confirmed_wrong';
     if (matchesTruth) return 'on_track'; // currently the best, even if eliminated
     const infoB = resolvedTid ? TEAM_ELIM[resolvedTid] : null;
@@ -3671,7 +3671,7 @@ function truthStatus(qid, pickAnswer, pickTeamId) {
     if (!t) return null;
     const matchesTruth = t.correct_team_id
       ? (t.correct_team_id === resolvedTid)
-      : (t.correct_answer||'').trim().toLowerCase() === (pickAnswer||'').trim().toLowerCase();
+      : _normName(t.correct_answer) === _normName(pickAnswer);
     if (confirmed) return matchesTruth ? 'confirmed_correct' : 'confirmed_wrong';
     if (matchesTruth) return 'on_track'; // currently the truth -- even if team is eliminated
     const infoW = resolvedTid ? TEAM_ELIM[resolvedTid] : null;
@@ -3699,7 +3699,7 @@ function truthStatus(qid, pickAnswer, pickTeamId) {
     if (confirmed) {
       const matchesTruth = t && t.correct_team_id
         ? (t.correct_team_id === resolvedTid)
-        : (t && (t.correct_answer||'').trim().toLowerCase() === (pickAnswer||'').trim().toLowerCase());
+        : (t && _normName(t.correct_answer) === _normName(pickAnswer));
       return matchesTruth ? 'confirmed_correct' : 'confirmed_wrong';
     }
     // Winner: team eliminated → wrong. Still in → possible.
@@ -3712,7 +3712,7 @@ function truthStatus(qid, pickAnswer, pickTeamId) {
     if (!t || !t.correct_answer) return null;
     const matchesTruth = t.correct_team_id
       ? (t.correct_team_id === resolvedTid)
-      : (t.correct_answer||'').trim().toLowerCase() === (pickAnswer||'').trim().toLowerCase();
+      : _normName(t.correct_answer) === _normName(pickAnswer);
     if (confirmed) return matchesTruth ? 'confirmed_correct' : 'confirmed_wrong';
     return matchesTruth ? 'on_track' : 'cur_wrong';
   }
@@ -3722,7 +3722,7 @@ function truthStatus(qid, pickAnswer, pickTeamId) {
     if (!t || !t.correct_answer) return null;
     const matchesTruth = t.correct_team_id
       ? (t.correct_team_id === resolvedTid)
-      : (t.correct_answer||'').trim().toLowerCase() === (pickAnswer||'').trim().toLowerCase();
+      : _normName(t.correct_answer) === _normName(pickAnswer);
     if (confirmed) return matchesTruth ? 'confirmed_correct' : 'confirmed_wrong';
     if (matchesTruth) return 'on_track'; // currently leading
     // Doesn't match current leader
@@ -3739,12 +3739,12 @@ function truthStatus(qid, pickAnswer, pickTeamId) {
     if (confirmed && t) {
       const matchesTruth = t.correct_player_id
         ? false // we don't have pick_player_id in this context, fall back to answer
-        : (t.correct_answer||'').trim().toLowerCase() === (pickAnswer||'').trim().toLowerCase();
+        : _normName(t.correct_answer) === _normName(pickAnswer);
       return matchesTruth ? 'confirmed_correct' : 'confirmed_wrong';
     }
     // Check if truth has a current leader
     if (t && t.correct_answer) {
-      const matchesTruth = (t.correct_answer||'').trim().toLowerCase() === (pickAnswer||'').trim().toLowerCase();
+      const matchesTruth = _normName(t.correct_answer) === _normName(pickAnswer);
       if (matchesTruth) return 'on_track'; // currently the top scorer/rated player
       // Doesn't match current leader
       if (info && info.elim && !info.thirdPlace) return 'not_possible'; // player's team eliminated
@@ -3907,7 +3907,7 @@ function renderComparison() {
     const isReallyShared = key => {
       const lp = lByKey[key], rp = rByKey[key];
       if (!lp || !rp) return false;
-      if (lp.qid) return (lp.answer||'').toLowerCase() === (rp.answer||'').toLowerCase();
+      if (lp.qid) return _normName(lp.answer) === _normName(rp.answer);
       return true;
     };
 
@@ -4144,6 +4144,16 @@ const TEAM_BY_ID   = {};
   TEAM_BY_NAME[t.team_name] = t;
   TEAM_BY_ID[t.team_id]     = t;
 });
+
+// Accent/diacritic-insensitive name comparison — player and team names
+// (Mbappé, Côte d'Ivoire, Türkiye, México...) get typed, form-submitted,
+// and re-keyed in enough different places that accented vs unaccented
+// spellings drift apart. Without folding these, a truth-matching check
+// like "Mbappe" (as picked) vs "Mbappé" (canonical) silently never
+// matches, even though they're clearly the same player.
+function _normName(s) {
+  return (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+}
 
 // ── Player likelihood score ───────────────────────────────────────────────
 // Returns 0–100: how likely is this player to score significant points going forward?
@@ -4743,7 +4753,7 @@ function questionLikelihood(qid, pickAnswer, pickTeamId) {
   if (confirmed) {
     const match = t.correct_team_id
       ? (t.correct_team_id === pickTeamId)
-      : (t.correct_answer||'').trim().toLowerCase() === (pickAnswer||'').trim().toLowerCase();
+      : _normName(t.correct_answer) === _normName(pickAnswer);
     return match ? 100 : 0;
   }
 
@@ -4785,7 +4795,7 @@ function questionLikelihood(qid, pickAnswer, pickTeamId) {
   if (qid && qid.endsWith('_GOALS')) {
     if (!t) return 25;
     const pickTeam  = TEAM_BY_NAME[pickAnswer] || null;
-    const isLeading = (t.correct_answer||'').trim().toLowerCase() === (pickAnswer||'').trim().toLowerCase()
+    const isLeading = _normName(t.correct_answer) === _normName(pickAnswer)
       || (t.correct_team_id && pickTeam && t.correct_team_id === pickTeam.team_id);
     if (pickTeam && pickTeam.is_eliminated) {
       if (isLeading) return confirmed ? 100 : 75; // locked in as truth leader
@@ -4834,7 +4844,7 @@ function questionLikelihood(qid, pickAnswer, pickTeamId) {
   if (qid && qid.endsWith('_CARDS')) {
     if (!t) return 25;
     const pickTeam = TEAM_BY_NAME[pickAnswer] || null;
-    const isLeadingCards = (t.correct_answer||'').trim().toLowerCase() === (pickAnswer||'').trim().toLowerCase()
+    const isLeadingCards = _normName(t.correct_answer) === _normName(pickAnswer)
       || (t.correct_team_id && pickTeam && t.correct_team_id === pickTeam.team_id);
     if (pickTeam && pickTeam.is_eliminated && !pickTeam.is_third_place) {
       if (isLeadingCards) return confirmed ? 100 : 72; // locked in as truth leader
@@ -4856,7 +4866,7 @@ function questionLikelihood(qid, pickAnswer, pickTeamId) {
   // ── Best ──────────────────────────────────────────────────────────────
   if (qid && qid.endsWith('_BEST')) {
     const pickTeam = TEAM_BY_NAME[pickAnswer] || null;
-    const isLeadingBest = t && ((t.correct_answer||'').trim().toLowerCase() === (pickAnswer||'').trim().toLowerCase()
+    const isLeadingBest = t && (_normName(t.correct_answer) === _normName(pickAnswer)
       || (t.correct_team_id && pickTeam && t.correct_team_id === pickTeam.team_id));
     if (pickTeam && pickTeam.is_eliminated) {
       if (isLeadingBest) return confirmed ? 100 : 55; // currently best but others could overtake
@@ -4899,7 +4909,7 @@ function questionLikelihood(qid, pickAnswer, pickTeamId) {
   if (qid && qid.endsWith('_WORST')) {
     const pickTeam = TEAM_BY_NAME[pickAnswer] || null;
     if (!pickTeam) return 20;
-    const isCurrentWorst = t && ((t.correct_answer||'').trim().toLowerCase() === (pickAnswer||'').trim().toLowerCase()
+    const isCurrentWorst = t && (_normName(t.correct_answer) === _normName(pickAnswer)
       || (t.correct_team_id && t.correct_team_id === pickTeam.team_id));
     // Worst mirrors Best (see above) but inverted: earliest stage reached
     // first, then group points/GD ascending -- matches the truth-calc order
@@ -4954,7 +4964,7 @@ function questionLikelihood(qid, pickAnswer, pickTeamId) {
   // ── Wooden Spoon ─────────────────────────────────────────────────────
   if (qid === 'Q_WOODEN_SPOON') {
     if (!t || !t.correct_answer) return 20;
-    const match = (t.correct_answer||'').toLowerCase() === (pickAnswer||'').toLowerCase();
+    const match = _normName(t.correct_answer) === _normName(pickAnswer);
     const pickTeam = TEAM_BY_NAME[pickAnswer] || null;
     if (!pickTeam) return 20;
     // Same stage-first logic as the per-pot Worst badge above, but compared
@@ -4995,7 +5005,7 @@ function questionLikelihood(qid, pickAnswer, pickTeamId) {
     const team = TEAM_BY_NAME[ps.team_name] || null;
     // Current leaders
     const curAnswer = t ? (t.correct_answer||'') : '';
-    const isCurrentLeader = curAnswer.toLowerCase() === (pickAnswer||'').toLowerCase();
+    const isCurrentLeader = _normName(curAnswer) === _normName(pickAnswer);
     // A player's own stats (goals/assists/clean sheets) are already locked
     // in -- their team being eliminated afterwards doesn't erase them. So
     // check current-leader status BEFORE the elimination zero-out: only a
@@ -5515,7 +5525,7 @@ function projForEntrant(name, scenario) {
       const elim   = elimRaw && !(qid.endsWith('_CARDS') && isTeamThirdPlace(p.team_name||p.answer));
       // Check scenario override for this slot
       const scenarioAnswer = plOver[qid];
-      const isScenarioCorrect = scenarioAnswer && scenarioAnswer.toLowerCase()===p.answer.toLowerCase();
+      const isScenarioCorrect = scenarioAnswer && _normName(scenarioAnswer) === _normName(p.answer);
       // Goals/Cards: eliminated team totals are locked -- they CAN still win
       // if their stat is currently the truth. questionLikelihood handles this.
       let likely = p.score > 0 ? 100
@@ -5571,13 +5581,13 @@ function projForEntrant(name, scenario) {
     let likely  = p.score>0 ? 100 : (elim ? 0 : questionLikelihood(qid, p.answer, p.team_id||''));
     let scenarioWin = false;
     // Scenario: override winner question — only boost if team not eliminated
-    if (qid==='Q_WINNER' && winTeam && !elim && winTeam.toLowerCase()===p.answer.toLowerCase() && p.score===0) {
+    if (qid==='Q_WINNER' && winTeam && !elim && _normName(winTeam) === _normName(p.answer) && p.score===0) {
       likely = 100; scenarioWin = true; catScenarioBonus += PTS.cat_correct;
     }
     // Scenario: generic category override
     if (!scenarioWin && catOver[qid]) {
       const scAnswer = catOver[qid];
-      if (scAnswer.toLowerCase() === (p.answer||'').toLowerCase() && p.score===0 && !elim) {
+      if (_normName(scAnswer) === _normName(p.answer) && p.score===0 && !elim) {
         likely = 100; scenarioWin = true; catScenarioBonus += PTS.cat_correct;
       }
     }
